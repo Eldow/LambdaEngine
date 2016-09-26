@@ -2,11 +2,14 @@
 <head>
   <title>Simple JS Game Engine</title>
 </head>
-<body onload="doGLDraw()">
-  <canvas id="GLCanvas" width="640" height = "480">
+<body>
+  <canvas id="canvas" width="640" height = "480">
     Your browser doesn't support the HTML5 canvas.
   </canvas>
-
-  <script src="WebGL.js"></script>
+  <script src="Game.js"></script>
+  <script>
+    var canvas = new Canvas("canvas")
+    var game = new Game(60);
+  </script>
 </body>
 </html>
