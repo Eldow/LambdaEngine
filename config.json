@@ -1,0 +1,18 @@
+[
+  {
+    "type": "circle",
+    "x": 150,
+    "y": 150,
+    "radius": 50,
+    "fillColor": "#E2FFC6",
+    "strokeColor": "#66CC01"
+  },
+  {
+    "type": "circle",
+    "x": 450,
+    "y": 50,
+    "radius": 50,
+    "fillColor": "#000",
+    "strokeColor": "#000"
+  }
+]
