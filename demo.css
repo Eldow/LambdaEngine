@@ -1,0 +1,37 @@
+html {
+  background-color: #2E7D32;
+}
+.title {
+  text-align: center;
+  font-size: 5em;
+  color: #fff;
+}
+.subtitle {
+  text-align: center;
+  font-size: 3em;
+  color: #fff;
+}
+.container {
+  margin-left: 23%;
+  margin-right: 25%;
+  margin-top: 50px;
+}
+.button-container {
+  float: left;
+  margin-top: 15%;
+  margin-left: 10%;
+}
+.fps-container {
+  float: right;
+  margin-top: 15%;
+  margin-right: 5%;
+}
+.play {
+  width: 128px;
+  height: 128px;
+  background: url("play-button.png");
+}
+.fps {
+  font-size: 7.5em;
+  color: #91dc5a;
+}

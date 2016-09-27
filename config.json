@@ -4,15 +4,42 @@
     "x": 150,
     "y": 150,
     "radius": 50,
-    "fillColor": "#E2FFC6",
-    "strokeColor": "#66CC01"
+    "fillColor": "#E2FFC6"
   },
   {
     "type": "circle",
     "x": 450,
     "y": 50,
     "radius": 50,
-    "fillColor": "#000",
-    "strokeColor": "#000"
+    "fillColor": "#000"
+  },
+  {
+    "type": "aabb",
+    "x": 650,
+    "y": 50,
+    "width": 150,
+    "height": 100,
+    "fillColor": "#33cccc"
+  },
+  {
+    "type": "obb",
+    "fillColor": "#EF5350",
+    "shapes": [
+      {
+        "type": "circle",
+        "x": 300,
+        "y": 300,
+        "radius": 75,
+        "fillColor": "#558B2F"
+      },
+      {
+        "type": "aabb",
+        "x": 380,
+        "y": 250,
+        "width": 150,
+        "height": 100,
+        "fillColor": "#C6FF00"
+      }
+    ]
   }
 ]

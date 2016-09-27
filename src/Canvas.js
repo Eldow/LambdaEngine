@@ -8,7 +8,6 @@ define([], () => {
       this.height=parseInt(this.canvas.getAttribute("height"));
       this.width=parseInt(this.canvas.getAttribute("width"));
       this.shapes = []
-      this.mousePosition = { "x" : 0, "y" : 0 }
       this.validity = false
     }
     //Initialise le canvas

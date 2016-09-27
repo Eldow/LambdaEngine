@@ -1,11 +1,25 @@
 <html>
   <head>
     <title>Simple JS Game Engine</title>
+    <link rel="stylesheet" type="text/css" href="demo.css" media="screen" />
   </head>
   <body>
-    <canvas id="canvas" width="1024" height = "768">
-      Your browser doesn't support the HTML5 canvas.
-    </canvas>
+    <div class="title">Lambda Engine</div>
+    <div class="subtitle">A Simple Javascript Game Engine</div>
+    <!-- Play/Pause Button-->
+    <div class="button-container">
+      <div class="play" id="play"></div>
+    </div>
+    <!-- FPS Indicator -->
+    <div class="fps-container">
+      <div class="fps" id="fps"></div>
+    </div>
+    <!-- HTML5 Canvas -->
+    <div class="container">
+      <canvas id="canvas" width="1024" height = "668">
+        Your browser doesn't support the HTML5 canvas.
+      </canvas>
+    </div>
     <script data-main="main" src="require.js"></script>
   </body>
 </html>
