@@ -1,0 +1,32 @@
+{
+  "name": "lambda_engine",
+  "version": "1.0.0",
+  "description": "Quick game engine in JS",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "nodemon": "^1.10.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eldow/LambdaEngine.git"
+  },
+  "keywords": [
+    "game",
+    "engine",
+    "javascript",
+    "canvas",
+    "shape"
+  ],
+  "author": "francois decan - marine ripon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eldow/LambdaEngine/issues"
+  },
+  "homepage": "https://github.com/Eldow/LambdaEngine#readme"
+}
