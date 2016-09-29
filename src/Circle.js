@@ -1,23 +1,39 @@
 define([], () => {
   "use strict"
   class Circle {
-    //Constructeur de cercle
+    //This circle's constructor
     constructor(config){
       this.x = config.x
       this.y = config.y
       this.radius = config.radius
+      this.dX = 5
+      this.dY = 10
       this.fillColor = config.fillColor
     }
-    //Mise à jour de la position de l'objet
+    //Update this circle's position
     update(canvas){
-      //Ici on peut modifier x et y en fonction de la vitesse, des collisions, de la gravité...
-      if (this.y + this.radius < canvas.height){
-        this.y = this.y * 1.05
-      } else {
+      //Keep this circle inside boundaries
+      if(this.y + this.radius > canvas.height){
         this.y = canvas.height - this.radius
+        this.dY = -this.dY
       }
+      if(this.y - this.radius < 0){
+        this.y = this.radius
+        this.dY = -this.dY
+      }
+      if(this.x + this.radius > canvas.width){
+        this.x = canvas.width - this.radius
+        this.dX = -this.dX
+      }
+      if(this.x - this.radius < 0){
+        this.x = this.radius
+        this.dX = -this.dX
+      }
+      //Update position
+      this.y += this.dY
+      this.x += this.dX
     }
-    //Instructions pour dessiner un cercle
+    //Draw this circle
     draw(ctx){
       ctx.beginPath()
       ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI, true)

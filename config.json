@@ -10,8 +10,8 @@
     "type": "circle",
     "x": 450,
     "y": 50,
-    "radius": 50,
-    "fillColor": "#000"
+    "radius": 100,
+    "fillColor": "#987456"
   },
   {
     "type": "aabb",
@@ -22,24 +22,43 @@
     "fillColor": "#33cccc"
   },
   {
+    "type": "aabb",
+    "x": 350,
+    "y": 20,
+    "width": 200,
+    "height": 200,
+    "fillColor": "#654321"
+  },
+  {
     "type": "obb",
-    "fillColor": "#EF5350",
-    "shapes": [
-      {
-        "type": "circle",
-        "x": 300,
-        "y": 300,
-        "radius": 75,
-        "fillColor": "#558B2F"
-      },
-      {
-        "type": "aabb",
-        "x": 380,
-        "y": 250,
-        "width": 150,
-        "height": 100,
-        "fillColor": "#C6FF00"
-      }
-    ]
+    "x": 450,
+    "y": 300,
+    "width": 100,
+    "height": 200,
+    "angle": "20",
+    "fillColor": "#321654"
+  },
+  {
+    "type": "polygon",
+    "points": [
+      {"x": 0, "y": 50},
+      {"x": 50, "y": 50},
+      {"x": 220, "y": 100},
+      {"x": 125, "y": 150},
+      {"x": 50, "y": 120}
+    ],
+    "fillColor": "#123456"
+  },
+  {
+    "type": "point",
+    "x": 250,
+    "y": 250,
+    "fillColor": "#FF0000"
+  },
+  {
+    "type": "point",
+    "x": 350,
+    "y": 350,
+    "fillColor": "#0000FF"
   }
 ]

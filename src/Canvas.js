@@ -1,28 +1,29 @@
-define([], () => {
+define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon'], (Collision, Circle, Aabb, Obb, Polygon) => {
   "use strict"
   class Canvas {
-    //Constructeur de canvas
+    //Canvas constructor
     constructor(id){
       this.canvas = document.getElementById(id)
       this.ctx = this.canvas.getContext("2d")
-      this.height=parseInt(this.canvas.getAttribute("height"));
-      this.width=parseInt(this.canvas.getAttribute("width"));
+      this.height = parseInt(this.canvas.getAttribute("height"));
+      this.width = parseInt(this.canvas.getAttribute("width"));
       this.shapes = []
       this.validity = false
     }
-    //Initialise le canvas
+    //Setup background
     setup(){
-      this.ctx.fillStyle = "#EEE"
+      this.ctx.fillStyle = "#000"
       this.ctx.fillRect(0,0,this.width, this.height)
     }
-    //Mets à jour toutes les formes du canvas
+    //Update all shapes
     update(){
       for (var shape of this.shapes){
         shape.update(this)
         this.validity = false
       }
+      Collision.computeCollisions(this.shapes)
     }
-    //Dessine toutes les formes du canvas
+    //Draw all shapes
     draw(){
       if (!this.validity){
         this.setup()
@@ -32,8 +33,24 @@ define([], () => {
       }
       this.validity = true
     }
-    //Ajoute une forme au canvas
+    //Add a shape
     addShape(shape){
+      if(shape.type == "circle"){
+        shape = new Circle(shape)
+      }
+      else if(shape.type == "aabb"){
+        shape = new Aabb(shape)
+      }
+      else if(shape.type == "obb"){
+        shape = new Obb(shape)
+      }
+      else if(shape.type == "polygon"){
+       shape = new Polygon(shape)
+      }
+      else if(shape.type == "point"){
+        shape.radius = 1
+        shape = new Circle(shape)
+      }
       this.shapes.push(shape)
     }
   }

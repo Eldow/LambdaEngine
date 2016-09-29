@@ -1,14 +1,17 @@
 (function() {
   'use strict';
   require(['Game', 'JSONLoader'], (Game, JSONLoader) => {
-    //Et on y charge la configuration de base
+    //Load configuration
     JSONLoader.loadJSON(function(response){
+      //FPS init
       var fps = 60
-      var g = new Game(fps)
       var fpsElement = document.getElementById("fps")
       fpsElement.innerHTML = fps + "fps"
+      //Game init
+      var g = new Game(fps)
       var obj = JSON.parse(response)
       g.loadGame(obj)
+      //Play/Pause button
       var play = document.getElementById("play")
       play.addEventListener("click", function(){
         if(g.interval == null){

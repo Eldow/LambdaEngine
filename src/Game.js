@@ -1,14 +1,14 @@
-define(['Canvas', 'Circle', 'Aabb', 'Obb'], (Canvas, Circle, Aabb, Obb) => {
+define(['Canvas'], (Canvas) => {
   "use strict"
   class Game {
-    //Constructeur de Game
+    //Game constructor
     constructor(fps){
       this.canvas = new Canvas("canvas")
       this.canvas.setup()
       this.fps = fps
       this.interval = null
     }
-    //Boucle rafraîchissant la vue à la fréquence des fps
+    //Game loop
     run(){
       console.log("Game started")
       var canvas = this.canvas
@@ -17,24 +17,16 @@ define(['Canvas', 'Circle', 'Aabb', 'Obb'], (Canvas, Circle, Aabb, Obb) => {
         canvas.draw()
       },1000 / this.fps)
     }
+    //Game pause
     stop() {
       console.log("Game paused")
       clearInterval(this.interval)
       this.interval = null
     }
-    //Initialise le canvas et charge les formes
+    //Load forms and initialize canvas
     loadGame(gameConfig){
       for (var shape of gameConfig){
-        if(shape.type == "circle"){
-          this.canvas.addShape(new Circle(shape))
-        }
-        else if(shape.type == "aabb"){
-          this.canvas.addShape(new Aabb(shape))
-        }
-        else if (shape.type == "obb"){
-          this.canvas.addShape(new Obb(shape))
-          this.loadGame(shape.shapes)
-        }
+        this.canvas.addShape(shape)
       }
       this.canvas.draw()
     }
