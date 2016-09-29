@@ -10,7 +10,7 @@ define([], () => {
       this.angle = config.angle
       this.width = config.width
       this.height = config.height
-      this.fillColor = config.fillColor
+      this.fillColor = config.color
     }
     //Update this Obb's position
     update(canvas){

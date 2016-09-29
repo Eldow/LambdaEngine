@@ -8,7 +8,7 @@ define([], () => {
       this.radius = config.radius
       this.dX = 5
       this.dY = 10
-      this.fillColor = config.fillColor
+      this.fillColor = config.color
     }
     //Update this circle's position
     update(canvas){

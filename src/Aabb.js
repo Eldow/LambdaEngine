@@ -9,7 +9,7 @@ define([], () => {
       this.dY = 10
       this.width = config.width
       this.height = config.height
-      this.fillColor = config.fillColor
+      this.fillColor = config.color
     }
     //Update this Aabb's position
     update(canvas){

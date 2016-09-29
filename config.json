@@ -4,14 +4,14 @@
     "x": 150,
     "y": 150,
     "radius": 50,
-    "fillColor": "#67ffb3"
+    "color": "#8BC34A"
   },
   {
     "type": "circle",
     "x": 450,
     "y": 50,
     "radius": 100,
-    "fillColor": "#ff4171"
+    "color": "#C5E1A5"
   },
   {
     "type": "aabb",
@@ -19,7 +19,7 @@
     "y": 50,
     "width": 150,
     "height": 100,
-    "fillColor": "#00e9e3"
+    "color": "#AED581"
   },
   {
     "type": "aabb",
@@ -27,7 +27,7 @@
     "y": 20,
     "width": 200,
     "height": 200,
-    "fillColor": "#ff38d1"
+    "color": "#9CCC65"
   },
   {
     "type": "obb",
@@ -36,7 +36,7 @@
     "width": 100,
     "height": 200,
     "angle": "20",
-    "fillColor": "#10e71f"
+    "color": "#8BC34A"
   },
   {
     "type": "polygon",
@@ -47,18 +47,18 @@
       {"x": 125, "y": 150},
       {"x": 50, "y": 120}
     ],
-    "fillColor": "#ff89ff"
+    "color": "#7CB342"
   },
   {
     "type": "point",
     "x": 250,
     "y": 250,
-    "fillColor": "#FF0049"
+    "color": "#689F38"
   },
   {
     "type": "point",
     "x": 350,
     "y": 350,
-    "fillColor": "#e2fe4d"
+    "color": "#558B2F"
   }
 ]

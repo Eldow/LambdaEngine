@@ -1,4 +1,4 @@
-define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon'], (Collision, Circle, Aabb, Obb, Polygon) => {
+define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point'], (Collision, Circle, Aabb, Obb, Polygon, Point) => {
   "use strict"
   class Canvas {
     //Canvas constructor
@@ -12,7 +12,7 @@ define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon'], (Collision, Circle, Aa
     }
     //Setup background
     setup(){
-      this.ctx.fillStyle = "#000"
+      this.ctx.fillStyle = "#fff"
       this.ctx.fillRect(0,0,this.width, this.height)
     }
     //Update all shapes
@@ -49,7 +49,7 @@ define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon'], (Collision, Circle, Aa
       }
       else if(shape.type == "point"){
         shape.radius = 1
-        shape = new Circle(shape)
+        shape = new Point(shape)
       }
       this.shapes.push(shape)
     }

@@ -6,7 +6,7 @@ define([], () => {
       this.points = config.points
       this.dX = 5
       this.dY = 10
-      this.fillColor = config.fillColor
+      this.fillColor = config.color
     }
     shift(offsetX, offsetY){
       for(var p of this.points){
