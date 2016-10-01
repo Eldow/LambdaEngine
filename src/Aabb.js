@@ -5,8 +5,8 @@ define([], () => {
     constructor(config){
       this.x = config.x
       this.y = config.y
-      this.dX = 5
-      this.dY = 10
+      this.dX = 1
+      this.dY = 1
       this.width = config.width
       this.height = config.height
       this.fillColor = config.color

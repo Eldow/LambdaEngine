@@ -5,8 +5,8 @@ define([], () => {
     constructor(config){
       this.x = config.x
       this.y = config.y
-      this.dX = 5
-      this.dY = 10
+      this.dX = 1
+      this.dY = 1
       this.strokeColor = config.color
     }
     //Update this point's position
