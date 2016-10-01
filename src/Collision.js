@@ -36,7 +36,22 @@ define([], () => {
     }
     //Checks if circle intersects rect and compute resulting velocities
     Collision.checkForCircleAabbCollision = function(circle, rect){
+      /*var centerRectX = rect.x + rect.width/2
+      var centerRectY = rect.y + rect.height/2
+      var distanceX = Math.abs(circle.x - centerRectX)
+      var distanceY = Math.abs(circle.y - centerRectY)
 
+      if(distanceX < (rect.width/2 + circle.radius) &&
+        distanceY < rect.height/2 + circle.radius){
+          if(distanceX <=  (rect.width/2) || distanceY <= (rect.height/2)){
+            Collision.dummyCollide(circle, rect)
+          }
+          var distanceXY = (distanceX - rect.width/2)*(distanceX - rect.width/2) +
+            (distanceY - rect.height/2)*(distanceY - rect.height/2)
+          if(distanceXY <= circle.radius*circle.radius){
+            Collision.dummyCollide(circle,rect)
+          }
+      }*/
     }
     //Checks if rectA intersects rectB and compute resulting velocities
     Collision.checkForAabbAabbCollision = function(rectA, rectB){
