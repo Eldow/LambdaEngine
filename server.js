@@ -16,4 +16,4 @@ app.get('/', function(req, res){
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Game Engine JS running on port : ' + port)
+console.log('Lambda Engine JS running on port : ' + port)
