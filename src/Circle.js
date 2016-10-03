@@ -14,7 +14,7 @@ define([], () => {
     update(canvas){
       //Keep this circle inside boundaries
       if(this.y + this.radius > canvas.height){
-        this.y = canvas.height - this.radius
+        //this.y = canvas.height - this.radius
         this.dY = -this.dY
       }
       if(this.y - this.radius < 0){
@@ -22,7 +22,7 @@ define([], () => {
         this.dY = -this.dY
       }
       if(this.x + this.radius > canvas.width){
-        this.x = canvas.width - this.radius
+        //this.x = canvas.width - this.radius
         this.dX = -this.dX
       }
       if(this.x - this.radius < 0){

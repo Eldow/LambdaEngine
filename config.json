@@ -8,23 +8,23 @@
   },
   {
     "type": "circle",
-    "x": 450,
-    "y": 50,
+    "x": 100,
+    "y": 550,
     "radius": 100,
     "color": "#C5E1A5"
   },
   {
     "type": "aabb",
-    "x": 650,
-    "y": 50,
+    "x": 250,
+    "y": 10,
     "width": 150,
     "height": 100,
     "color": "#AED581"
   },
   {
     "type": "aabb",
-    "x": 350,
-    "y": 20,
+    "x": 650,
+    "y": 200,
     "width": 200,
     "height": 200,
     "color": "#9CCC65"
