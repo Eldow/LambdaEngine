@@ -1,4 +1,4 @@
-define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point'], (Collision, Circle, Aabb, Obb, Polygon, Point) => {
+define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point', 'KDop'], (Collision, Circle, Aabb, Obb, Polygon, Point, KDop) => {
   "use strict"
   class Canvas {
     //Canvas constructor
@@ -45,11 +45,13 @@ define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point'], (Collision, C
         shape = new Obb(shape)
       }
       else if(shape.type == "polygon"){
-       shape = new Polygon(shape)
+        shape = new Polygon(shape)
       }
       else if(shape.type == "point"){
-        shape.radius = 1
         shape = new Point(shape)
+      }
+      else if(shape.type == "kdop"){
+        shape = new KDop(shape)
       }
       this.shapes.push(shape)
     }
