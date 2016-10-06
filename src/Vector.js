@@ -34,14 +34,12 @@ define([], () => {
 
     getProjectedPoint(point){
       var value = point.x * this.x + point.y * this.y
-      var value = value / this.getNorm()
       return {'x' : value * this.x, 'y' : value * this.y}
     }
 
     getNormalVector(){
-      return new Vector(-this.y, this.x)
+      return new Vector(-this.y/this.getNorm(), this.x/this.getNorm())
     }
-
   }
   return Vector
 })

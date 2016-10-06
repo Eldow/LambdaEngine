@@ -116,8 +116,39 @@ define([], () => {
   }
   //Checks if obbA intersects obbB and compute resulting velocities
   Collision.checkForObbObbCollision = function(obbA, obbB){
+    var overlap = true
+    var projectedPointsA = obbA.projectShape(obbB)
+    var projectedPointsB = obbB.projectShape(obbA, true)
+    console.log("début boucle")
+    for (var i = 0; i < projectedPointsA.length; i++){
+      var segmentA = projectedPointsA[i]
+      var segmentB = projectedPointsB[i]
+        if (!Collision.overlap(segmentA, segmentB)){
+          overlap = false
+      }
+    }
+    if(overlap)
+      Collision.dummyCollide(obbA, obbB)
+  }
 
-
+  Collision.overlap = function(segmentA, segmentB){
+    var distance, currentDistance, maxPoints
+    var currentDistance = 0
+    //TODO: Optimize loop so it doesn't make checks twice for same points
+    for (var p1 of segmentA){
+      for (var p2 of segmentB){
+        distance = Math.sqrt((p2.x - p1.x)*(p2.x - p1.x)+(p2.y - p1.y)*(p2.y - p1.y))
+        if(distance > currentDistance){
+          currentDistance = distance
+        }
+      }
+    }
+    //TODO: Minimize code maybe by constructing the vectors segA and segB
+    var normSegmentA = Math.sqrt((segmentA[0].x - segmentA[1].x)*(segmentA[0].x - segmentA[1].x)+(segmentA[0].y - segmentA[1].y)*(segmentA[0].y - segmentA[1].y))
+    var normSegmentB = Math.sqrt((segmentB[0].x - segmentB[1].x)*(segmentB[0].x - segmentB[1].x)+(segmentB[0].y - segmentB[1].y)*(segmentB[0].y - segmentB[1].y))
+    if(currentDistance < (normSegmentA + normSegmentB))
+      return true
+    return false
   }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){

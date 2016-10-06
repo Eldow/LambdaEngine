@@ -9,7 +9,7 @@ define(['Vector'], (Vector) => {
       this.width = config.width
       this.height = config.height*/
       //var rad = (config.angle * Math.PI)/180
-      var rad = config.angle
+      var rad = -config.angle
       var vectorX = new Vector(Math.cos(rad), Math.sin(rad))
       vectorX.productWithScalar(config.width/2)
       var vectorY = new Vector(- Math.sin(rad), Math.cos(rad))
@@ -44,12 +44,11 @@ define(['Vector'], (Vector) => {
     getProjectedVector(vector){
       var projectedPoints = []
       for (var i = 0; i < 4; i ++){
-        projectedPoints.push(vector.getProjectedPoints(this.points[i]))
+        projectedPoints.push(vector.getProjectedPoint(this.points[i]))
       }
 
       var d = 0
-      var maxVector = {}
-      var p1, p2, currentD
+      var p1, p2, currentD, maxPoints
 
       for (var j = 0; j < 4; j ++){
         for (var k = j + 1; k < 4; k ++){
@@ -58,23 +57,30 @@ define(['Vector'], (Vector) => {
           currentD = Math.sqrt((p1.x - p2.x)*(p1.x - p2.x)+(p1.y - p2.y)*(p1.y - p2.y))
           if (currentD > d){
             d = currentD
-            maxVector = new Vector(p2.x - p1.x, p2.y - p1.y)
+            maxPoints = [p1, p2]
           }
         }
       }
-      return maxVector
+      return maxPoints
     }
 
     //project shape on the normal vectors
-    projectShape(collidedObb){
+    projectShape(collidedObb, second){
       var projectedShape = []
-      var projectedShapeOnCollidedObb = []
       for(var i = 0; i < 4; i++){
-        projectedShape.push(this.project(new Vector(this.points[(i+1) % 4].x - this.point[i].x,
-          this.points[(i+1) % 4].y - this.points[i].y).getNormalVector()))
-        projectedShapeOnCollidedObb.push(this.project(new Vector(collidedObb.points[(i+1) % 4].x - collidedObb.point[i].x,
-          collidedObb.points[(i+1) % 4].y - collidedObb.points[i].y).getNormalVector()))
+        if(second){
+          projectedShape.push(this.getProjectedVector(new Vector(collidedObb.points[(i+1) % 4].x - collidedObb.points[i].x,
+            collidedObb.points[(i+1) % 4].y - collidedObb.points[i].y).getNormalVector()))
+          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % 4].x - this.points[i].x,
+            this.points[(i+1) % 4].y - this.points[i].y).getNormalVector()))
+        }else{
+          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % 4].x - this.points[i].x,
+            this.points[(i+1) % 4].y - this.points[i].y).getNormalVector()))
+          projectedShape.push(this.getProjectedVector(new Vector(collidedObb.points[(i+1) % 4].x - collidedObb.points[i].x,
+            collidedObb.points[(i+1) % 4].y - collidedObb.points[i].y).getNormalVector()))
+        }
       }
+      return projectedShape
     }
 
     //Update this Obb's position
