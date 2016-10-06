@@ -1,11 +1,10 @@
-define([], () => {
+define(['Collision'], (Collision) => {
   "use strict"
   class KDop {
     //This kDop's constructor
     constructor(config){
       //We only implemented 8-Dops
       this.k = config.mins.length + config.maxs.length
-      console.log(this.k)
       this.dX = 1
       this.dY = 1
       this.mins = config.mins
@@ -15,13 +14,15 @@ define([], () => {
       this.setup()
     }
     setup(){
-      var x, y, centerX, centerY, ax, ay, bx, by, cx, cy, dx, dy, theta, rect, width, height, cos, sin
-      var rects = []
+      var x, y, centerX, centerY,
+            ax, ay, bx, by, cx, cy, dx, dy,
+              theta, rect, width, height, cos, sin
+      this.rects = []
       for(var i = 0; i < this.k/2; i+=2){
         //compute center
         width = this.maxs[i] - this.mins[i]
         height = this.maxs[i+1] - this.mins[i+1]
-        theta = Math.PI/(4*(i+1))
+        theta = -Math.PI/(4*(i+1))
         cos = Math.cos(theta)
         sin = Math.sin(theta)
         //offsets
@@ -53,18 +54,26 @@ define([], () => {
     }
     //Update this kDop's position
     update(canvas){
+      var top = {"type":"boundary", "k":4,"mins":[0, -canvas.height], "maxs": [canvas.width, 0], "dX":this.dX, "dY":-this.dY}
+      var bottom = { "type":"boundary", "k":4,"mins":[0, canvas.height], "maxs": [canvas.width, 2*canvas.height], "dX":this.dX, "dY":-this.dY}
+      var left = { "type":"boundary", "k":4,"mins":[-canvas.width, 0], "maxs": [0, canvas.height], "dX":-this.dX, "dY":this.dY}
+      var right = { "type":"boundary", "k":4,"mins":[canvas.width, 0], "maxs": [2*canvas.width, canvas.height], "dX":-this.dX, "dY":this.dY}
       //Keep this kDop inside boundaries
+      Collision.checkForKdopKdopCollision(this, top)
+      Collision.checkForKdopKdopCollision(this, bottom)
+      Collision.checkForKdopKdopCollision(this, left)
+      Collision.checkForKdopKdopCollision(this, right)
       //Update position
-      for(var rect of this.rects){
-        rect.A.x += this.dX
-        rect.A.y += this.dY
-        rect.B.x += this.dX
-        rect.B.y += this.dY
-        rect.C.x += this.dX
-        rect.C.y += this.dY
-        rect.D.x += this.dX
-        rect.D.y += this.dY
+      for (var i = 0; i < this.k/2; i++){
+        if(i%2 === 0){
+          this.mins[i] += this.dX
+          this.maxs[i] += this.dX
+        } else {
+          this.mins[i] += this.dY
+          this.maxs[i] += this.dY
+        }
       }
+      this.setup()
     }
     drawRect(ctx, index, color){
       ctx.beginPath()
@@ -83,10 +92,12 @@ define([], () => {
     draw(ctx){
       //first plane 01 10
       ctx.save()
-      this.drawRect(ctx, 0, null)
-      ctx.clip()
+      for(var i = 0; i < this.rects.length-1; i++){
+        this.drawRect(ctx, i, null)
+        ctx.clip()
+      }
       //second plane 11 1-1
-      this.drawRect(ctx, 1, this.fillColor)
+      this.drawRect(ctx, this.rects.length-1, this.fillColor)
       ctx.restore()
     }
   }

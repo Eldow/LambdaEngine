@@ -36,6 +36,9 @@ define([], () => {
         if(formA == "Aabb" && formB == "Point"){
           this.checkForPointAabbCollision(shapes[j], shapes[i])
         }
+        if(formA == "KDop" && formB == "KDop"){
+          this.checkForKdopKdopCollision(shapes[i], shapes[j])
+        }
         //TODO : More checks - depending on how we want to simplify it (ex: Aabb is the same as Obb with a 0° angle)
       }
     }
@@ -102,6 +105,16 @@ define([], () => {
          Collision.dummyCollide(rectA, rectB)
     }
   }
+  //Checks if kdopA intersects kdopB and compute resulting velocities
+  Collision.checkForKdopKdopCollision = function(kdopA, kdopB){
+    var k = ((kdopA.k > kdopB.k) ? kdopB.k : kdopA.k)
+    console.log(kdopA, kdopB)
+    for(var i = 0; i < k/2; i++){
+      if(kdopA.mins[i] >= kdopB.maxs[i] || kdopA.maxs[i] <= kdopB.mins[i])
+        return
+    }
+    Collision.dummyCollide(kdopA, kdopB)
+  }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){
     //TODO : Make collisions clever by sending to dest a strength proportionnal to the area of the src
@@ -109,8 +122,10 @@ define([], () => {
     var tempY = entityA.dY
     entityA.dX = entityB.dX
     entityA.dY = entityB.dY
-    entityB.dX = tempX
-    entityB.dY = tempY
+    if(entityB.type !== "boundary"){
+      entityB.dX = tempX
+      entityB.dY = tempY
+    }
   }
 
 return Collision
