@@ -102,6 +102,12 @@ define([], () => {
          Collision.dummyCollide(rectA, rectB)
     }
   }
+  //Checks if obbA intersects obbB and compute resulting velocities
+  Collision.checkForObbObbCollision = function(obbA, obbB){
+  
+
+  }
+
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){
     //TODO : Make collisions clever by sending to dest a strength proportionnal to the area of the src
