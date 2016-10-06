@@ -108,12 +108,16 @@ define([], () => {
   //Checks if kdopA intersects kdopB and compute resulting velocities
   Collision.checkForKdopKdopCollision = function(kdopA, kdopB){
     var k = ((kdopA.k > kdopB.k) ? kdopB.k : kdopA.k)
-    console.log(kdopA, kdopB)
     for(var i = 0; i < k/2; i++){
       if(kdopA.mins[i] >= kdopB.maxs[i] || kdopA.maxs[i] <= kdopB.mins[i])
         return
     }
     Collision.dummyCollide(kdopA, kdopB)
+  }
+  //Checks if obbA intersects obbB and compute resulting velocities
+  Collision.checkForObbObbCollision = function(obbA, obbB){
+
+
   }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){
