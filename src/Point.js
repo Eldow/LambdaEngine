@@ -12,20 +12,10 @@ define([], () => {
     //Update this point's position
     update(canvas){
       //Keep this point inside boundaries
-      if(this.y > canvas.height){
-        this.y = canvas.height
+      if(this.y > canvas.height || this.y < 0){
         this.dY = -this.dY
       }
-      if(this.y < 0){
-        this.y = 0
-        this.dY = -this.dY
-      }
-      if(this.x > canvas.width){
-        this.x = canvas.width
-        this.dX = -this.dX
-      }
-      if(this.x < 0){
-        this.x = 0
+      if(this.x > canvas.width || this.x < 0){
         this.dX = -this.dX
       }
       //Update position

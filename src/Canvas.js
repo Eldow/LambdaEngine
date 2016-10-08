@@ -5,13 +5,15 @@ define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point', 'KDop'], (Coll
     constructor(id){
       this.canvas = document.getElementById(id)
       this.ctx = this.canvas.getContext("2d")
-      this.height = parseInt(this.canvas.getAttribute("height"));
-      this.width = parseInt(this.canvas.getAttribute("width"));
+      this.width  = window.innerWidth;
+      this.height = window.innerHeight;
       this.shapes = []
       this.validity = false
     }
     //Setup background
     setup(){
+      this.ctx.canvas.width  = this.width;
+      this.ctx.canvas.height = this.height;
       this.ctx.fillStyle = "#fff"
       this.ctx.fillRect(0,0,this.width, this.height)
     }

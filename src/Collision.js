@@ -6,7 +6,6 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       for(var j = i+1; j < shapes.length; j++){
         var formA = shapes[i].constructor.name
         var formB = shapes[j].constructor.name
-        console.log(formA, formB)
         if(formA == "Circle" && formB == "Circle"){
           this.checkForCircleCircleCollision(shapes[i], shapes[j])
         }
@@ -58,11 +57,17 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
         if(formA == "KDop" && formB == "KDop"){
           this.checkForKdopKdopCollision(shapes[i], shapes[j])
         }
-        if(formA == "Kdop" && formB == "Aabb"){
+        if(formA == "KDop" && formB == "Aabb"){
           this.checkForKdopAabbCollision(shapes[i], shapes[j])
         }
         if(formA == "Aabb" && formB == "KDop"){
           this.checkForKdopAabbCollision(shapes[j], shapes[i])
+        }
+        if(formA == "KDop" && formB == "Point"){
+          this.checkForKdopPointCollision(shapes[i], shapes[j])
+        }
+        if(formA == "Point" && formB == "KDop"){
+          this.checkForKdopPointCollision(shapes[j], shapes[i])
         }
         //TODO : More checks - depending on how we want to simplify it (ex: Aabb is the same as Obb with a 0° angle)
       }
@@ -259,12 +264,38 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     }
     return false
   }
+  //Check if point intersects segment
+  Collision.checkForPointSegmentCollision = function(p, segment){
+    function sqr(x) { return x * x }
+    function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+    function distToSegmentSquared(p, v, w) {
+      var l2 = dist2(v, w);
+      if (l2 == 0) return dist2(p, v);
+      var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+      t = Math.max(0, Math.min(1, t));
+      return dist2(p, { x: v.x + t * (w.x - v.x),
+                        y: v.y + t * (w.y - v.y) });
+    }
+    function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
+    if(distToSegment(p, segment.a, segment.b) < 2){
+      return true
+    } else {
+      return false
+    }
+  }
   //Check if aabb and kdop are colliding by turning the aabb into a kdop4
   Collision.checkForKdopAabbCollision = function(kdop, aabb){
     var kAabb = {"k":4, "mins":[aabb.x, aabb.y], "maxs":[aabb.x+aabb.width, aabb.y+aabb.height], "dX":aabb.dX,"dY":aabb.dY}
     Collision.checkForKdopKdopCollision(kdop, kAabb)
     aabb.dX = kAabb.dX
     aabb.dY = kAabb.dY
+  }
+  //Check if point and kdop are colliding by computing a kdop4 for point
+  Collision.checkForKdopPointCollision = function(kdop, p){
+    for (var i = 0; i < kdop.points.length; i++){
+      if(Collision.checkForPointSegmentCollision(p, {"a":kdop.points[i], "b":kdop.points[(i+1)%kdop.points.length]}))
+        Collision.dummyCollide(kdop, p)
+    }
   }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){

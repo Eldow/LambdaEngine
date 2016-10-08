@@ -7,6 +7,9 @@ define(['Canvas'], (Canvas) => {
       this.canvas.setup()
       this.fps = fps
       this.interval = null
+      window.addEventListener('resize', function(event){
+        location.reload()
+      });
     }
     //Game loop
     run(){

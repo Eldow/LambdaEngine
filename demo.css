@@ -2,9 +2,6 @@ html {
   background-color: #fff;
   font-family: 'Raleway', sans-serif;
 }
-canvas {
-  border: 2px solid #91dc5a;
-}
 .title {
   text-align: center;
   font-size: 5em;
@@ -16,8 +13,10 @@ canvas {
   color: #91dc5a;
 }
 .container {
-  margin-left: 23%;
-  margin-top: 50px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index:-1;
 }
 .button-container {
   float: left;

@@ -19,7 +19,6 @@ define(['Vector'], (Vector) => {
       this.points.push(center.substractVector(vectorX).addVector(vectorY))
       this.dX = 1
       this.dY = 1
-      console.log(this.points)
       this.fillColor = config.color
     }
 
