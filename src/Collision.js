@@ -6,6 +6,7 @@ define(['Vector'], (Vector) => {
       for(var j = i+1; j < shapes.length; j++){
         var formA = shapes[i].constructor.name
         var formB = shapes[j].constructor.name
+        console.log(formA, formB)
         if(formA == "Circle" && formB == "Circle"){
           this.checkForCircleCircleCollision(shapes[i], shapes[j])
         }
@@ -56,6 +57,12 @@ define(['Vector'], (Vector) => {
         }
         if(formA == "KDop" && formB == "KDop"){
           this.checkForKdopKdopCollision(shapes[i], shapes[j])
+        }
+        if(formA == "Kdop" && formB == "Aabb"){
+          this.checkForKdopAabbCollision(shapes[i], shapes[j])
+        }
+        if(formA == "Aabb" && formB == "KDop"){
+          this.checkForKdopAabbCollision(shapes[j], shapes[i])
         }
         //TODO : More checks - depending on how we want to simplify it (ex: Aabb is the same as Obb with a 0° angle)
       }
@@ -199,8 +206,6 @@ define(['Vector'], (Vector) => {
         Collision.dummyCollide(obb, point)
       }
     }
-
-
   }
 
   //Check if segment defined by points a and b intersects circle
@@ -236,6 +241,13 @@ define(['Vector'], (Vector) => {
       return true
     }
     return false
+  }
+  //Check if aabb and kdop are colliding by turning the aabb into a kdop4
+  Collision.checkForKdopAabbCollision = function(kdop, aabb){
+    var kAabb = {"k":4, "mins":[aabb.x, aabb.y], "maxs":[aabb.x+aabb.width, aabb.y+aabb.height], "dX":aabb.dX,"dY":aabb.dY}
+    Collision.checkForKdopKdopCollision(kdop, kAabb)
+    aabb.dX = kAabb.dX
+    aabb.dY = kAabb.dY
   }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){

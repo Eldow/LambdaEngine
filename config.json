@@ -22,6 +22,14 @@
     "color": "#AED581"
   },
   {
+    "type": "aabb",
+    "x": 650,
+    "y": 200,
+    "width": 100,
+    "height": 200,
+    "color": "#AED581"
+  },
+  {
     "type": "obb",
     "x": 450,
     "y": 200,

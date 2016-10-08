@@ -79,22 +79,22 @@ define(['Collision'], (Collision) => {
         x = (straightB.k - straightA.k)/(straightA.x - straightB.x)
         y = straightA.x * x + straightA.k
       }
-      return {"x":y, "y":-x}
+      return {"x":-x, "y":y}
     }
     //Update this kDop's position
     update(canvas){
       //Keep the shape inside canvas's boundaries
-      var top = { "type": "boundary", "k":4, "mins":[0,0], "maxs":[canvas.width, -canvas.height], "dX": -this.dX, "dY": -this.dY}
-      var bot = {  "type": "boundary","k":4, "mins":[0, canvas.height], "maxs":[canvas.width, 2*canvas.height], "dX": -this.dX, "dY": -this.dY}
-      var left = {  "type": "boundary","k":4, "mins":[-canvas.width,0], "maxs":[0, canvas.height], "dX": -this.dX, "dY": -this.dY}
-      var right = {  "type": "boundary","k":4, "mins":[canvas.width,0], "maxs":[2*canvas.width, canvas.height], "dX": -this.dX, "dY": -this.dY}
+      var top = { "type": "boundary", "k":4, "mins":[0,-canvas.height], "maxs":[canvas.width, 0], "dX": this.dX, "dY": -this.dY}
+      var bot = {  "type": "boundary","k":4, "mins":[0, canvas.height], "maxs":[canvas.width, 2*canvas.height], "dX": this.dX, "dY": -this.dY}
+      var left = {  "type": "boundary","k":4, "mins":[-canvas.width,0], "maxs":[0, canvas.height], "dX": -this.dX, "dY": this.dY}
+      var right = {  "type": "boundary","k":4, "mins":[canvas.width,0], "maxs":[2*canvas.width, canvas.height], "dX": -this.dX, "dY": this.dY}
       Collision.checkForKdopKdopCollision(this, top)
       Collision.checkForKdopKdopCollision(this, bot)
       Collision.checkForKdopKdopCollision(this, left)
       Collision.checkForKdopKdopCollision(this, right)
       //Update position
       for(var i = 0; i < this.k/2; i++){
-        var speed = this.axis[i].x * this.dX + this.axis[i].y * this.dY
+        var speed = this.axis[i].x * this.dX +   this.axis[i].y * this.dY
         this.mins[i]+= speed
         this.maxs[i]+= speed
       }
