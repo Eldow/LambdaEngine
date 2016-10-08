@@ -6,70 +6,56 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       for(var j = i+1; j < shapes.length; j++){
         var formA = shapes[i].constructor.name
         var formB = shapes[j].constructor.name
-        if(formA == "Circle" && formB == "Circle"){
+        if(formA == "Circle" && formB == "Circle")
           this.checkForCircleCircleCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Aabb" && formB == "Aabb"){
+        if(formA == "Aabb" && formB == "Aabb")
           this.checkForAabbAabbCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Obb" && formB == "Obb"){
+        if(formA == "Obb" && formB == "Obb")
           this.checkForObbObbCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Obb" && formB == "Circle"){
+        if(formA == "Obb" && formB == "Circle")
           this.checkForObbCircleCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Circle" && formB == "Obb"){
+        if(formA == "Circle" && formB == "Obb")
           this.checkForObbCircleCollision(shapes[j], shapes[i])
-        }
-        if(formA == "Obb" && formB == "Aabb"){
+        if(formA == "Obb" && formB == "Aabb")
           this.checkForObbAabbCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Aabb" && formB == "Obb"){
+        if(formA == "Aabb" && formB == "Obb")
           this.checkForObbAabbCollision(shapes[j], shapes[i])
-        }
-        if(formA == "Obb" && formB == "Point"){
+        if(formA == "Obb" && formB == "Point")
           this.checkForObbPointCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Point" && formB == "Obb"){
+        if(formA == "Point" && formB == "Obb")
           this.checkForObbPointCollision(shapes[j], shapes[i])
-        }
-        if(formA == "Circle" && formB == "Aabb"){
+        if(formA == "Circle" && formB == "Aabb")
           this.checkForCircleAabbCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Aabb" && formB == "Circle"){
+        if(formA == "Aabb" && formB == "Circle")
           this.checkForCircleAabbCollision(shapes[j], shapes[i])
-        }
-        if(formA == "Point" && formB == "Point"){
+        if(formA == "Point" && formB == "Point")
           this.checkForPointPointCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Point" && formB == "Circle"){
+        if(formA == "Point" && formB == "Circle")
           this.checkForPointCircleCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Circle" && formB == "Point"){
+        if(formA == "Circle" && formB == "Point")
           this.checkForPointCircleCollision(shapes[j], shapes[i])
-        }
-        if(formA == "Point" && formB == "Aabb"){
+        if(formA == "Point" && formB == "Aabb")
           this.checkForPointAabbCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Aabb" && formB == "Point"){
+        if(formA == "Aabb" && formB == "Point")
           this.checkForPointAabbCollision(shapes[j], shapes[i])
-        }
-        if(formA == "KDop" && formB == "KDop"){
+        if(formA == "KDop" && formB == "KDop")
           this.checkForKdopKdopCollision(shapes[i], shapes[j])
-        }
-        if(formA == "KDop" && formB == "Aabb"){
+        if(formA == "KDop" && formB == "Aabb")
           this.checkForKdopAabbCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Aabb" && formB == "KDop"){
+        if(formA == "Aabb" && formB == "KDop")
           this.checkForKdopAabbCollision(shapes[j], shapes[i])
-        }
-        if(formA == "KDop" && formB == "Point"){
+        if(formA == "KDop" && formB == "Point")
           this.checkForKdopPointCollision(shapes[i], shapes[j])
-        }
-        if(formA == "Point" && formB == "KDop"){
+        if(formA == "Point" && formB == "KDop")
           this.checkForKdopPointCollision(shapes[j], shapes[i])
-        }
-        //TODO : More checks - depending on how we want to simplify it (ex: Aabb is the same as Obb with a 0° angle)
+        if(formA == "Kdop" && formB == "Circle")
+          this.checkForKdopCircleCollision(shapes[i], shapes[j])
+        if(formA == "Circle" && formB == "KDop")
+          this.checkForKdopCircleCollision(shapes[j], shapes[i])
+        if(formA == "Kdop" && formB == "Obb")
+          this.checkForKdopObbCollision(shapes[i], shapes[j])
+        if(formA == "Obb" && formB == "KDop")
+          this.checkForKdopObbCollision(shapes[j], shapes[i])
       }
     }
   }
@@ -232,24 +218,36 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
 
   //Check if segment defined by points a and b intersects circle
   Collision.checkForSegmentCircleCollision = function(a, b, circle){
-    if (!Collision.checkForLineCircleCollision(a, b, circle)){
-      return false
+    var AC = new Vector (circle.x - a.x, circle.y - a.y)
+    var AB = new Vector (b.x - a.x, b.y - a.y)
+    var dot = AC.dotProduct(AB)
+    var len = AB.x * AB.x + AB.y * AB.y
+    var proj = -1
+    if (len != 0){
+      proj = dot/len
     }
-    var AB = new Vector(b.x - a.x, b.y - b.y)
-    var AC = new Vector(circle.x - a.x, circle.y - a.y)
-    var BC = new Vector(circle.x - b.x, circle.y - b.y)
+    var x, y
 
-    var dotABAC = AB.dotProduct(AC)
-    AB.productWithScalar(-1)
-    var dotBABC = AB.dotProduct(BC)
-
-    if (dotABAC > 0 && dotBABC > 0){
-      return true
+    if (proj < 0){
+      x = a.x
+      y = a.y
+    }else if (proj > 1){
+      x = b.x
+      y = b.y
+    }else {
+      x = a.x + proj * AB.x
+      y = a.y + proj * AB.y
     }
-    if (AC.getNorm() < circle.radius || BC.getNorm() < circle.radius){
+
+    var dx = circle.x - x
+    var dy = circle.y - y
+
+    if(Math.sqrt(dx * dx + dy * dy) <= circle.radius){
       return true
     }
     return false
+
+
   }
   //Check if line defined by points a and b intersects circle
   Collision.checkForLineCircleCollision = function(a, b, circle){
@@ -296,6 +294,21 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       if(Collision.checkForPointSegmentCollision(p, {"a":kdop.points[i], "b":kdop.points[(i+1)%kdop.points.length]}))
         Collision.dummyCollide(kdop, p)
     }
+  }
+  //Check if KDop intersects circle
+  Collision.checkForKdopCircleCollision = function(kdop, circle){
+    if(Collision.isKdopSegmentCollideCircle(kdop, circle)){
+      Collision.dummyCollide(kdop, circle)
+    }
+  }
+  //Check if segment is colliding circle
+  Collision.isKdopSegmentCollideCircle = function (kdop, circle){
+    for (var i = 0; i < kdop.points.length; i++){
+      if(Collision.checkForSegmentCircleCollision(kdop.points[i], kdop.points[(i+1) % kdop.points.length], circle)){
+        return true
+      }
+    }
+    return false
   }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){
