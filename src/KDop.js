@@ -3,102 +3,116 @@ define(['Collision'], (Collision) => {
   class KDop {
     //This kDop's constructor
     constructor(config){
-      //We only implemented 8-Dops
-      this.k = config.mins.length + config.maxs.length
+      this.k = config.axis.length*2
       this.dX = 1
       this.dY = 1
       this.mins = config.mins
       this.maxs = config.maxs
+      this.axis = config.axis
       this.fillColor = config.color
-      this.rects = []
+      this.points = []
       this.setup()
     }
+    //Setup Kdop - compute straight lines and their intersections so we can draw its shape
     setup(){
-      var x, y, centerX, centerY,
-            ax, ay, bx, by, cx, cy, dx, dy,
-              theta, rect, width, height, cos, sin
-      this.rects = []
-      for(var i = 0; i < this.k/2; i+=2){
-        //compute center
-        width = this.maxs[i] - this.mins[i]
-        height = this.maxs[i+1] - this.mins[i+1]
-        theta = -Math.PI/(4*(i+1))
-        cos = Math.cos(theta)
-        sin = Math.sin(theta)
-        //offsets
-        x = width/2
-        y = height/2
-        //center
-        centerX = this.mins[i] + width/2
-        centerY = this.mins[i+1] + height/2
-        //rotate corners
-        ax = centerX + x*cos - y*sin
-        ay = centerY + x*sin + y*cos
-        x = -width/2
-        bx = centerX + x*cos - y*sin
-        by = centerY + x*sin + y*cos
-        y = -height/2
-        cx = centerX + x*cos - y*sin
-        cy = centerY + x*sin + y*cos
-        x = width/2
-        dx = centerX + x*cos - y*sin
-        dy = centerY + x*sin + y*cos
-
-        //push new rectangle
-        rect = {"A": {"x":ax, "y":ay},
-                  "B": {"x":bx, "y":by},
-                   "C": {"x":cx, "y":cy},
-                    "D": {"x":dx, "y":dy}}
-        this.rects.push(rect)
+      var minStraights = []
+      var maxStraights = []
+      this.points = []
+      //Order the axis clockwise
+      var indexs = this.orderAxis()
+      //Store all straight lines
+      for (var i = 0; i < this.k/2; i++){
+        minStraights.push({"x": this.axis[i].x, "y":this.axis[i].y, "k": this.mins[i]})
+        maxStraights.push({"x": this.axis[i].x, "y":this.axis[i].y, "k": this.maxs[i]})
       }
+      //Loop through ordered lines to construct the intersections points needed to draw the kdop
+      var a, b
+      for (var i = 0; i < indexs.length-1; i++){
+        a = indexs[i]
+        b = indexs[i+1]
+        this.points.push(this.intersect(minStraights[a], minStraights[b]))
+      }
+      this.points.push(this.intersect(minStraights[indexs[indexs.length-1]], maxStraights[indexs[0]]))
+      for (var i = 0; i < indexs.length-1; i++){
+        a = indexs[i]
+        b = indexs[i+1]
+        this.points.push(this.intersect(maxStraights[a], maxStraights[b]))
+      }
+      this.points.push(this.intersect(maxStraights[indexs[indexs.length-1]], minStraights[indexs[0]]))
+    }
+    //order axis
+    orderAxis(){
+      var xIndexs = []
+      var yIndexs = []
+      for (var i = 0; i < this.axis.length; i++){
+        if(i%2==0){
+          xIndexs.splice(1, 0, i)
+        } else {
+          yIndexs.splice(1, 0, i)
+        }
+      }
+      return xIndexs.concat(yIndexs)
+    }
+    //returns the intersection point between two straight lines
+    intersect(straightA, straightB){
+      //Eq are of the form a*x + b*y = k
+      var x, y
+      if(straightA.y < 0){
+        straightA.y = -straightA.y
+        straightA.x = -straightA.x
+        straightA.k = -straightA.k
+      }
+      if(straightB.y < 0){
+        straightB.y = -straightB.y
+        straightB.x = -straightB.x
+        straightB.k = -straightB.k
+      }
+      if(straightA.y==0){
+        x = -straightA.k / straightA.x
+        y = straightB.x * x + straightB.k
+      }
+      if(straightB.y==0){
+        x = -straightB.k / straightB.x
+        y = straightA.x * x + straightA.k
+      }
+      if(x == undefined && y == undefined) {
+        x = (straightB.k - straightA.k)/(straightA.x - straightB.x)
+        y = straightA.x * x + straightA.k
+      }
+      return {"x":y, "y":-x}
     }
     //Update this kDop's position
     update(canvas){
-      var top = {"type":"boundary", "k":4,"mins":[0, -canvas.height], "maxs": [canvas.width, 0], "dX":this.dX, "dY":-this.dY}
-      var bottom = { "type":"boundary", "k":4,"mins":[0, canvas.height], "maxs": [canvas.width, 2*canvas.height], "dX":this.dX, "dY":-this.dY}
-      var left = { "type":"boundary", "k":4,"mins":[-canvas.width, 0], "maxs": [0, canvas.height], "dX":-this.dX, "dY":this.dY}
-      var right = { "type":"boundary", "k":4,"mins":[canvas.width, 0], "maxs": [2*canvas.width, canvas.height], "dX":-this.dX, "dY":this.dY}
-      //Keep this kDop inside boundaries
+      //Keep the shape inside canvas's boundaries
+      var top = { "type": "boundary", "k":4, "mins":[0,0], "maxs":[canvas.width, -canvas.height], "dX": -this.dX, "dY": -this.dY}
+      var bot = {  "type": "boundary","k":4, "mins":[0, canvas.height], "maxs":[canvas.width, 2*canvas.height], "dX": -this.dX, "dY": -this.dY}
+      var left = {  "type": "boundary","k":4, "mins":[-canvas.width,0], "maxs":[0, canvas.height], "dX": -this.dX, "dY": -this.dY}
+      var right = {  "type": "boundary","k":4, "mins":[canvas.width,0], "maxs":[2*canvas.width, canvas.height], "dX": -this.dX, "dY": -this.dY}
       Collision.checkForKdopKdopCollision(this, top)
-      Collision.checkForKdopKdopCollision(this, bottom)
+      Collision.checkForKdopKdopCollision(this, bot)
       Collision.checkForKdopKdopCollision(this, left)
       Collision.checkForKdopKdopCollision(this, right)
       //Update position
-      for (var i = 0; i < this.k/2; i++){
-        if(i%2 === 0){
-          this.mins[i] += this.dX
-          this.maxs[i] += this.dX
-        } else {
-          this.mins[i] += this.dY
-          this.maxs[i] += this.dY
-        }
+      for(var i = 0; i < this.k/2; i++){
+        var speed = this.axis[i].x * this.dX + this.axis[i].y * this.dY
+        this.mins[i]+= speed
+        this.maxs[i]+= speed
       }
       this.setup()
     }
-    drawRect(ctx, index, color){
-      ctx.beginPath()
-      ctx.moveTo(this.rects[index].A.x, this.rects[index].A.y)
-      ctx.lineTo(this.rects[index].B.x, this.rects[index].B.y)
-      ctx.lineTo(this.rects[index].C.x, this.rects[index].C.y)
-      ctx.lineTo(this.rects[index].D.x, this.rects[index].D.y)
-      ctx.lineTo(this.rects[index].A.x, this.rects[index].A.y)
-      ctx.closePath()
-      if(color !== null){
-        ctx.fillStyle = color
-        ctx.fill()
-      }
-    }
     //Draw this kDop
     draw(ctx){
-      //first plane 01 10
-      ctx.save()
-      for(var i = 0; i < this.rects.length-1; i++){
-        this.drawRect(ctx, i, null)
-        ctx.clip()
+      ctx.beginPath()
+      ctx.moveTo(this.points[0].x, this.points[0].y)
+      for (var point of this.points){
+        ctx.lineTo(point.x, point.y)
       }
-      //second plane 11 1-1
-      this.drawRect(ctx, this.rects.length-1, this.fillColor)
-      ctx.restore()
+      ctx.lineTo(this.points[0].x, this.points[0].y)
+      ctx.closePath()
+      if(this.fillColor !== null){
+        ctx.fillStyle = this.fillColor
+        ctx.fill()
+      }
     }
   }
   return KDop

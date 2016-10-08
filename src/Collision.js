@@ -119,7 +119,6 @@ define([], () => {
     var overlap = true
     var projectedPointsA = obbA.projectShape(obbB)
     var projectedPointsB = obbB.projectShape(obbA, true)
-    console.log("début boucle")
     for (var i = 0; i < projectedPointsA.length; i++){
       var segmentA = projectedPointsA[i]
       var segmentB = projectedPointsB[i]
