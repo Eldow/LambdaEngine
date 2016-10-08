@@ -3,12 +3,7 @@ define(['Vector'], (Vector) => {
   class Obb {
     //This Obb's constructor
     constructor(config){
-      /*this.x = config.x
-      this.y = config.y*/
-      /*this.angle = config.angle
-      this.width = config.width
-      this.height = config.height*/
-      //var rad = (config.angle * Math.PI)/180
+
       var rad = -config.angle
       var vectorX = new Vector(Math.cos(rad), Math.sin(rad))
       vectorX.productWithScalar(config.width/2)
@@ -24,19 +19,7 @@ define(['Vector'], (Vector) => {
       this.points.push(center.substractVector(vectorX).addVector(vectorY))
       this.dX = 1
       this.dY = 1
-
-      this.vecs = []
-      var vecX = this.points[1].substractVector(this.points[0])
-      var vecY = this.points[3].substractVector(this.points[0])
-      this.vecs.push(vecX)
-      this.vecs.push(vecY)
-
-      this.origin = []
-
-      for (var i = 0; i < 2; i++){
-        //this.vecs[i] = this.vecs[i].getUnitVector()
-        this.origin.push(this.points[0].dotProduct(this.vecs[i]))
-      }
+      console.log(this.points)
       this.fillColor = config.color
     }
 
@@ -64,20 +47,20 @@ define(['Vector'], (Vector) => {
       return maxPoints
     }
 
-    //project shape on the normal vectors
-    projectShape(collidedObb, second){
+    //project shape on the normal vectors of collidedShapePoints
+    projectShape(collidedShapePoints, second){
       var projectedShape = []
-      for(var i = 0; i < 4; i++){
+      for(var i = 0; i < collidedShapePoints.length; i++){
         if(second){
-          projectedShape.push(this.getProjectedVector(new Vector(collidedObb.points[(i+1) % 4].x - collidedObb.points[i].x,
-            collidedObb.points[(i+1) % 4].y - collidedObb.points[i].y).getNormalVector()))
-          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % 4].x - this.points[i].x,
-            this.points[(i+1) % 4].y - this.points[i].y).getNormalVector()))
+          projectedShape.push(this.getProjectedVector(new Vector(collidedShapePoints[(i+1) % collidedShapePoints.length].x - collidedShapePoints[i].x,
+            collidedShapePoints[(i+1) % collidedShapePoints.length].y - collidedShapePoints[i].y).getNormalVector()))
+          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % collidedShapePoints.length].x - this.points[i].x,
+            this.points[(i+1) % collidedShapePoints.length].y - this.points[i].y).getNormalVector()))
         }else{
-          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % 4].x - this.points[i].x,
-            this.points[(i+1) % 4].y - this.points[i].y).getNormalVector()))
-          projectedShape.push(this.getProjectedVector(new Vector(collidedObb.points[(i+1) % 4].x - collidedObb.points[i].x,
-            collidedObb.points[(i+1) % 4].y - collidedObb.points[i].y).getNormalVector()))
+          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % collidedShapePoints.length].x - this.points[i].x,
+            this.points[(i+1) % collidedShapePoints.length].y - this.points[i].y).getNormalVector()))
+          projectedShape.push(this.getProjectedVector(new Vector(collidedShapePoints[(i+1) % collidedShapePoints.length].x - collidedShapePoints[i].x,
+            collidedShapePoints[(i+1) % collidedShapePoints.length].y - collidedShapePoints[i].y).getNormalVector()))
         }
       }
       return projectedShape
@@ -110,9 +93,7 @@ define(['Vector'], (Vector) => {
       for (var i = 0; i < 4; i ++){
         this.points[i] = this.points[i].addVector(toAdd)
       }
-      for (var j = 0; j < 2; j++){
-        this.origin[j] = this.points[0].dotProduct(this.vecs[j])
-      }
+
     }
     //Draw this Obb
     draw(ctx){

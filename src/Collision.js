@@ -1,4 +1,4 @@
-define([], () => {
+define(['Vector'], (Vector) => {
   var Collision = {}
   //Checks if shapes are colliding another
   Collision.computeCollisions = function(shapes){
@@ -14,6 +14,24 @@ define([], () => {
         }
         if(formA == "Obb" && formB == "Obb"){
           this.checkForObbObbCollision(shapes[i], shapes[j])
+        }
+        if(formA == "Obb" && formB == "Circle"){
+          this.checkForObbCircleCollision(shapes[i], shapes[j])
+        }
+        if(formA == "Circle" && formB == "Obb"){
+          this.checkForObbCircleCollision(shapes[j], shapes[i])
+        }
+        if(formA == "Obb" && formB == "Aabb"){
+          this.checkForObbAabbCollision(shapes[i], shapes[j])
+        }
+        if(formA == "Aabb" && formB == "Obb"){
+          this.checkForObbAabbCollision(shapes[j], shapes[i])
+        }
+        if(formA == "Obb" && formB == "Point"){
+          this.checkForObbPointCollision(shapes[i], shapes[j])
+        }
+        if(formA == "Point" && formB == "Obb"){
+          this.checkForObbPointCollision(shapes[j], shapes[i])
         }
         if(formA == "Circle" && formB == "Aabb"){
           this.checkForCircleAabbCollision(shapes[i], shapes[j])
@@ -117,9 +135,8 @@ define([], () => {
   //Checks if obbA intersects obbB and compute resulting velocities
   Collision.checkForObbObbCollision = function(obbA, obbB){
     var overlap = true
-    var projectedPointsA = obbA.projectShape(obbB)
-    var projectedPointsB = obbB.projectShape(obbA, true)
-    console.log("début boucle")
+    var projectedPointsA = obbA.projectShape(obbB.points)
+    var projectedPointsB = obbB.projectShape(obbA.points, true)
     for (var i = 0; i < projectedPointsA.length; i++){
       var segmentA = projectedPointsA[i]
       var segmentB = projectedPointsB[i]
@@ -148,6 +165,76 @@ define([], () => {
     var normSegmentB = Math.sqrt((segmentB[0].x - segmentB[1].x)*(segmentB[0].x - segmentB[1].x)+(segmentB[0].y - segmentB[1].y)*(segmentB[0].y - segmentB[1].y))
     if(currentDistance < (normSegmentA + normSegmentB))
       return true
+    return false
+  }
+  //Check if obb intersect circle and compute the resulting velocities
+  Collision.checkForObbCircleCollision =  function(obb, circle){
+    var isCollide = false
+    for (var i = 0; i < obb.points.length; i++){
+      if (Collision.checkForSegmentCircleCollision(obb.points[i], obb.points[(i+1)%obb.points.length], circle)){
+        isCollide = true
+      }
+    }
+    if(isCollide){
+      Collision.dummyCollide(obb, circle)
+    }
+  }
+
+  //Check if obb intersects abb and compute the resulting velocities
+  Collision.checkForObbAabbCollision = function(obb, aabb){
+    Collision.checkForObbObbCollision(obb, aabb)
+  }
+
+  //Check if obb intersect point and compute the resulting velocities
+  Collision.checkForObbPointCollision = function(obb, point){
+    var v1 = new Vector(obb.points[1].x - obb.points[0].x, obb.points[1].y - obb.points[0].y)
+    var v2 = new Vector(point.x - obb.points[0].x, point.y - obb.points[0].y)
+    var dotProduct = v1.dotProduct(v2)
+
+    if (dotProduct >= 0 && dotProduct <= v1.x * v1.x + v1.y * v1.y){
+      v1 = new Vector(obb.points[2].x - obb.points[1].x, obb.points[2].y - obb.points[1].y)
+      v2 = new Vector(point.x - obb.points[1].x, point.y - obb.points[1].y)
+      dotProduct = v1.dotProduct(v2)
+      if (dotProduct >= 0 && dotProduct <= v1.x * v1.x + v1.y * v1.y){
+        Collision.dummyCollide(obb, point)
+      }
+    }
+
+
+  }
+
+  //Check if segment defined by points a and b intersects circle
+  Collision.checkForSegmentCircleCollision = function(a, b, circle){
+    if (!Collision.checkForLineCircleCollision(a, b, circle)){
+      return false
+    }
+    var AB = new Vector(b.x - a.x, b.y - b.y)
+    var AC = new Vector(circle.x - a.x, circle.y - a.y)
+    var BC = new Vector(circle.x - b.x, circle.y - b.y)
+
+    var dotABAC = AB.dotProduct(AC)
+    AB.productWithScalar(-1)
+    var dotBABC = AB.dotProduct(BC)
+
+    if (dotABAC > 0 && dotBABC > 0){
+      return true
+    }
+    if (AC.getNorm() < circle.radius || BC.getNorm() < circle.radius){
+      return true
+    }
+    return false
+  }
+  //Check if line defined by points a and b intersects circle
+  Collision.checkForLineCircleCollision = function(a, b, circle){
+    var AB = new Vector(b.x - a.x, b.y - b.y)
+    var AC = new Vector(circle.x - a.x, circle.y - a.y)
+
+    var num = Math.abs(AB.x * AC.y - AB.y * AC.x)
+    var den = AB.getNorm()
+
+    if (num/den < circle.radius){
+      return true
+    }
     return false
   }
   //Swap velocities between two shapes
