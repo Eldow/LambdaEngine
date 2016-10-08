@@ -1,4 +1,4 @@
-define(['Vector'], (Vector) => {
+define(['Vector', 'Obb'], (Vector, Obb) => {
   var Collision = {}
   //Checks if shapes are colliding another
   Collision.computeCollisions = function(shapes){
@@ -134,6 +134,12 @@ define(['Vector'], (Vector) => {
   }
   //Checks if obbA intersects obbB and compute resulting velocities
   Collision.checkForObbObbCollision = function(obbA, obbB){
+    if(Collision.isObbObbCollided(obbA,obbB)){
+      Collision.dummyCollide(obbA, obbB)
+    }
+  }
+
+  Collision.isObbObbCollided = function(obbA, obbB){
     var overlap = true
     var projectedPointsA = obbA.projectShape(obbB.points)
     var projectedPointsB = obbB.projectShape(obbA.points, true)
@@ -144,8 +150,7 @@ define(['Vector'], (Vector) => {
           overlap = false
       }
     }
-    if(overlap)
-      Collision.dummyCollide(obbA, obbB)
+    return overlap
   }
 
   Collision.overlap = function(segmentA, segmentB){
@@ -182,7 +187,19 @@ define(['Vector'], (Vector) => {
 
   //Check if obb intersects abb and compute the resulting velocities
   Collision.checkForObbAabbCollision = function(obb, aabb){
-    Collision.checkForObbObbCollision(obb, aabb)
+    var config = {
+      "type": "obb",
+      "x": aabb.x + aabb.width/2,
+      "y": aabb.y + aabb.height/2,
+      "width": aabb.width,
+      "height": aabb.height,
+      "angle": 0,
+      "color": aabb.fillColor
+    }
+    var convertedAabb = new Obb(config)
+    if(Collision.isObbObbCollided(obb, convertedAabb)){
+      Collision.dummyCollide(obb, aabb)
+    }
   }
 
   //Check if obb intersect point and compute the resulting velocities
