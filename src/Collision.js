@@ -310,6 +310,10 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     }
     return false
   }
+  //Check if KDop intersects obb
+  Collision.checkForKdopObbCollision = function(kdop, obb){
+
+  }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){
     //TODO : Make collisions clever by sending to dest a strength proportionnal to the area of the src
