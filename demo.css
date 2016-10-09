@@ -2,6 +2,14 @@ html {
   background-color: #fff;
   font-family: 'Raleway', sans-serif;
 }
+.logo {
+  background: url("./assets/lambdoid-logo.png");
+  position: fixed;
+  bottom: 50;
+  right: 50;
+  width: 250px;
+  height: 250px;
+}
 .title {
   text-align: center;
   font-size: 5em;
@@ -19,18 +27,18 @@ html {
   z-index:-1;
 }
 .button-container {
-  float: left;
-  margin-top: 15%;
-  margin-left: 8%;
+  position: fixed;
+  left: 100;
+  bottom: 50%;
   transition: all 0.5s ease 0s;
 }
 .button-container:hover {
   opacity: 0.6;
 }
 .fps-container {
-  float: right;
-  margin-top: 15%;
-  margin-right: 7%;
+  position: fixed;
+  right: 100;
+  bottom: 50%;
 }
 .play {
   width: 128px;

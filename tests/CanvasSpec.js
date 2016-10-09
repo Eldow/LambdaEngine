@@ -1,4 +1,4 @@
-define(['Canvas'], function(Canvas){
+define(['Canvas', 'PointSpec', 'AabbSpec', 'CircleSpec', 'ObbSpec', 'KDopSpec'], function(Canvas){
 
   var canvas = new Canvas("canvas")
 

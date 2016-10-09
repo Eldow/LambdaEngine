@@ -1,4 +1,4 @@
-define(['Game'], function(Game){
+define(['Game', 'CanvasSpec'], function(Game){
 
   var game = new Game(60)
 

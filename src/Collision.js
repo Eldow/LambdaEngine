@@ -1,6 +1,6 @@
 define(['Vector', 'Obb'], (Vector, Obb) => {
   var Collision = {}
-  //Checks if shapes are colliding another
+  //Call the appropriate collision test depending on shapes types
   Collision.computeCollisions = function(shapes){
     for (var i = 0; i < shapes.length; i++){
       for(var j = i+1; j < shapes.length; j++){
@@ -59,28 +59,9 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       }
     }
   }
-  //Checks if pointA intersects pointB and compute resulting velocities
-  Collision.checkForPointPointCollision = function(pointA, pointB){
-    if(pointA.x == pointB.x && pointA.y == pointB.y){
-      Collision.dummyCollide(pointA, pointB)
-    }
-  }
-
-  //Checks if point intersects circle and compute resulting velocities
-  Collision.checkForPointCircleCollision = function(point, circle){
-    var distance2 = (point.x-circle.x)*(point.x-circle.x) + (point.y-circle.y)*(point.y-circle.y)
-    if (distance2 < circle.radius * circle.radius){
-      Collision.dummyCollide(point, circle)
-    }
-  }
-  //Checks if point intersects rectangle and compute resulting velocities
-  Collision.checkForPointAabbCollision = function(point, rect){
-    if(point.x > rect.x && point.x < rect.x + rect.width
-      && point.y > rect.y && point.y < rect.y + rect.height){
-        Collision.dummyCollide(point, rect)
-    }
-  }
-
+  /*****************************************************************************
+  ******************************SHAPE COLLISIONS********************************
+  *****************************************************************************/
   //Checks if circleA intersects circleB and compute resulting velocities
   Collision.checkForCircleCircleCollision = function(circleA, circleB){
     var dx = circleA.x - circleB.x
@@ -121,55 +102,11 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
          Collision.dummyCollide(rectA, rectB)
     }
   }
-  //Checks if kdopA intersects kdopB and compute resulting velocities
-  Collision.checkForKdopKdopCollision = function(kdopA, kdopB){
-    var k = ((kdopA.k > kdopB.k) ? kdopA.k : kdopB.k)
-    for(var i = 0; i < k/2; i++){
-      if(kdopA.mins[i] > kdopB.maxs[i] || kdopA.maxs[i] < kdopB.mins[i])
-        return
-    }
-    Collision.dummyCollide(kdopA, kdopB)
-  }
   //Checks if obbA intersects obbB and compute resulting velocities
   Collision.checkForObbObbCollision = function(obbA, obbB){
     if(Collision.arePolygonColliding(obbA,obbB)){
       Collision.dummyCollide(obbA, obbB)
     }
-  }
-
-  Collision.arePolygonColliding = function(polygonA, polygonB){
-    var overlap = true
-    var projectedPoints = Collision.projectShape(polygonA.points, polygonB.points)
-    for (var i = 0; i < projectedPoints.shapeA.length; i++){
-      var segmentA = projectedPoints.shapeA[i]
-      var segmentB = projectedPoints.shapeB[i]
-      if(segmentA !== undefined && segmentB !== undefined){
-        if (!Collision.overlap(segmentA, segmentB)){
-          overlap = false
-        }
-      }
-    }
-    return overlap
-  }
-
-  Collision.overlap = function(segmentA, segmentB){
-    var distance, currentDistance, maxPoints
-    var currentDistance = 0
-    //TODO: Optimize loop so it doesn't make checks twice for same points
-    for (var p1 of segmentA){
-      for (var p2 of segmentB){
-        distance = Math.sqrt((p2.x - p1.x)*(p2.x - p1.x)+(p2.y - p1.y)*(p2.y - p1.y))
-        if(distance > currentDistance){
-          currentDistance = distance
-        }
-      }
-    }
-    //TODO: Minimize code maybe by constructing the vectors segA and segB
-    var normSegmentA = Math.sqrt((segmentA[0].x - segmentA[1].x)*(segmentA[0].x - segmentA[1].x)+(segmentA[0].y - segmentA[1].y)*(segmentA[0].y - segmentA[1].y))
-    var normSegmentB = Math.sqrt((segmentB[0].x - segmentB[1].x)*(segmentB[0].x - segmentB[1].x)+(segmentB[0].y - segmentB[1].y)*(segmentB[0].y - segmentB[1].y))
-    if(currentDistance < (normSegmentA + normSegmentB))
-      return true
-    return false
   }
   //Check if obb intersect circle and compute the resulting velocities
   Collision.checkForObbCircleCollision =  function(obb, circle){
@@ -183,7 +120,6 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       Collision.dummyCollide(obb, circle)
     }
   }
-
   //Check if obb intersects abb and compute the resulting velocities
   Collision.checkForObbAabbCollision = function(obb, aabb){
     var config = {
@@ -200,7 +136,6 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       Collision.dummyCollide(obb, aabb)
     }
   }
-
   //Check if obb intersect point and compute the resulting velocities
   Collision.checkForObbPointCollision = function(obb, point){
     var v1 = new Vector(obb.points[1].x - obb.points[0].x, obb.points[1].y - obb.points[0].y)
@@ -216,71 +151,14 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       }
     }
   }
-
-  //Check if segment defined by points a and b intersects circle
-  Collision.checkForSegmentCircleCollision = function(a, b, circle){
-    var AC = new Vector (circle.x - a.x, circle.y - a.y)
-    var AB = new Vector (b.x - a.x, b.y - a.y)
-    var dot = AC.dotProduct(AB)
-    var len = AB.x * AB.x + AB.y * AB.y
-    var proj = -1
-    if (len != 0){
-      proj = dot/len
+  //Checks if kdopA intersects kdopB and compute resulting velocities
+  Collision.checkForKdopKdopCollision = function(kdopA, kdopB){
+    var k = ((kdopA.k > kdopB.k) ? kdopA.k : kdopB.k)
+    for(var i = 0; i < k/2; i++){
+      if(kdopA.mins[i] > kdopB.maxs[i] || kdopA.maxs[i] < kdopB.mins[i])
+        return
     }
-    var x, y
-
-    if (proj < 0){
-      x = a.x
-      y = a.y
-    }else if (proj > 1){
-      x = b.x
-      y = b.y
-    }else {
-      x = a.x + proj * AB.x
-      y = a.y + proj * AB.y
-    }
-
-    var dx = circle.x - x
-    var dy = circle.y - y
-
-    if(Math.sqrt(dx * dx + dy * dy) <= circle.radius){
-      return true
-    }
-    return false
-
-
-  }
-  //Check if line defined by points a and b intersects circle
-  Collision.checkForLineCircleCollision = function(a, b, circle){
-    var AB = new Vector(b.x - a.x, b.y - b.y)
-    var AC = new Vector(circle.x - a.x, circle.y - a.y)
-
-    var num = Math.abs(AB.x * AC.y - AB.y * AC.x)
-    var den = AB.getNorm()
-
-    if (num/den < circle.radius){
-      return true
-    }
-    return false
-  }
-  //Check if point intersects segment
-  Collision.checkForPointSegmentCollision = function(p, segment){
-    function sqr(x) { return x * x }
-    function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
-    function distToSegmentSquared(p, v, w) {
-      var l2 = dist2(v, w);
-      if (l2 == 0) return dist2(p, v);
-      var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-      t = Math.max(0, Math.min(1, t));
-      return dist2(p, { x: v.x + t * (w.x - v.x),
-                        y: v.y + t * (w.y - v.y) });
-    }
-    function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
-    if(distToSegment(p, segment.a, segment.b) < 2){
-      return true
-    } else {
-      return false
-    }
+    Collision.dummyCollide(kdopA, kdopB)
   }
   //Check if aabb and kdop are colliding by turning the aabb into a kdop4
   Collision.checkForKdopAabbCollision = function(kdop, aabb){
@@ -298,7 +176,7 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       Collision.dummyCollide(kdop, aabb)
     }
   }
-  //Check if point and kdop are colliding by computing a kdop4 for point
+  //Check if point and kdop are colliding by looping through all segments
   Collision.checkForKdopPointCollision = function(kdop, p){
     var isCollide = false
     for (var i = 0; i < kdop.points.length; i++){
@@ -313,19 +191,30 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     if(Collision.isKdopSegmentCollideCircle(kdop, circle))
       Collision.dummyCollide(kdop, circle)
   }
-  //Check if segment is colliding circle
-  Collision.isKdopSegmentCollideCircle = function (kdop, circle){
-    for (var i = 0; i < kdop.points.length; i++){
-      if(Collision.checkForSegmentCircleCollision(kdop.points[i], kdop.points[(i+1) % kdop.points.length], circle))
-        return true
+  //Checks if pointA intersects pointB and compute resulting velocities
+  Collision.checkForPointPointCollision = function(pointA, pointB){
+    if(pointA.x == pointB.x && pointA.y == pointB.y){
+      Collision.dummyCollide(pointA, pointB)
     }
-    return false
   }
-  //Check if KDop intersects obb
-  Collision.checkForKdopObbCollision = function(kdop, obb){
-    if(Collision.arePolygonColliding(kdop, obb))
-      Collision.dummyCollide(kdop, obb)
+  //Checks if point intersects circle and compute resulting velocities
+  Collision.checkForPointCircleCollision = function(point, circle){
+    var distance2 = (point.x-circle.x)*(point.x-circle.x) + (point.y-circle.y)*(point.y-circle.y)
+    if (distance2 < circle.radius * circle.radius){
+      Collision.dummyCollide(point, circle)
+    }
   }
+  //Checks if point intersects rectangle and compute resulting velocities
+  Collision.checkForPointAabbCollision = function(point, rect){
+    if(point.x > rect.x && point.x < rect.x + rect.width
+      && point.y > rect.y && point.y < rect.y + rect.height){
+        Collision.dummyCollide(point, rect)
+    }
+  }
+
+  /*****************************************************************************
+  **************************************UTILS***********************************
+  *****************************************************************************/
   //Project corners on a vector and return min and max boundaries
   Collision.getProjectedVector = function(vector, points){
     var projectedPoints = []
@@ -348,7 +237,41 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     }
     return maxPoints
   }
-
+  //Loop through points and compare the overlapping of each segments
+  Collision.arePolygonColliding = function(polygonA, polygonB){
+    var overlap = true
+    var projectedPoints = Collision.projectShape(polygonA.points, polygonB.points)
+    for (var i = 0; i < projectedPoints.shapeA.length; i++){
+      var segmentA = projectedPoints.shapeA[i]
+      var segmentB = projectedPoints.shapeB[i]
+      if(segmentA !== undefined && segmentB !== undefined){
+        if (!Collision.overlap(segmentA, segmentB)){
+          overlap = false
+        }
+      }
+    }
+    return overlap
+  }
+  //Return true if segments are overlaping
+  Collision.overlap = function(segmentA, segmentB){
+    var distance, currentDistance, maxPoints
+    var currentDistance = 0
+    //TODO: Optimize loop so it doesn't make checks twice for same points
+    for (var p1 of segmentA){
+      for (var p2 of segmentB){
+        distance = Math.sqrt((p2.x - p1.x)*(p2.x - p1.x)+(p2.y - p1.y)*(p2.y - p1.y))
+        if(distance > currentDistance){
+          currentDistance = distance
+        }
+      }
+    }
+    //TODO: Minimize code maybe by constructing the vectors segA and segB
+    var normSegmentA = Math.sqrt((segmentA[0].x - segmentA[1].x)*(segmentA[0].x - segmentA[1].x)+(segmentA[0].y - segmentA[1].y)*(segmentA[0].y - segmentA[1].y))
+    var normSegmentB = Math.sqrt((segmentB[0].x - segmentB[1].x)*(segmentB[0].x - segmentB[1].x)+(segmentB[0].y - segmentB[1].y)*(segmentB[0].y - segmentB[1].y))
+    if(currentDistance < (normSegmentA + normSegmentB))
+      return true
+    return false
+  }
   //project shape on the normal vectors of collidedShapePoints
   Collision.projectShape = function(pointsA, pointsB){
     var projectedShapeA = []
@@ -373,7 +296,80 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     }
     return { "shapeA": projectedShapeA, "shapeB": projectedShapeB}
   }
-  //Swap velocities between two shapes
+  //Check if segment defined by points a and b intersects circle
+  Collision.checkForSegmentCircleCollision = function(a, b, circle){
+    var AC = new Vector (circle.x - a.x, circle.y - a.y)
+    var AB = new Vector (b.x - a.x, b.y - a.y)
+    var dot = AC.dotProduct(AB)
+    var len = AB.x * AB.x + AB.y * AB.y
+    var proj = -1
+    var x, y
+
+    if (len != 0)
+      proj = dot/len
+    if (proj < 0){
+      x = a.x
+      y = a.y
+    }else if (proj > 1){
+      x = b.x
+      y = b.y
+    }else {
+      x = a.x + proj * AB.x
+      y = a.y + proj * AB.y
+    }
+
+    var dx = circle.x - x
+    var dy = circle.y - y
+
+    if(Math.sqrt(dx * dx + dy * dy) <= circle.radius)
+      return true
+    return false
+  }
+  //Check if line defined by points a and b intersects circle
+  Collision.checkForLineCircleCollision = function(a, b, circle){
+    var AB = new Vector(b.x - a.x, b.y - b.y)
+    var AC = new Vector(circle.x - a.x, circle.y - a.y)
+
+    var num = Math.abs(AB.x * AC.y - AB.y * AC.x)
+    var den = AB.getNorm()
+
+    if (num/den < circle.radius){
+      return true
+    }
+    return false
+  }
+  //Check if point intersects segment
+  Collision.checkForPointSegmentCollision = function(p, segment){
+    function dist2(v, w) { return (v.x - w.x)*(v.x - w.x) + (v.y - w.y)*(v.y - w.y) }
+    function distToSegmentSquared(p, v, w) {
+      var l2 = dist2(v, w);
+      if (l2 == 0) return dist2(p, v);
+      var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+      t = Math.max(0, Math.min(1, t));
+      return dist2(p, { x: v.x + t * (w.x - v.x),
+                        y: v.y + t * (w.y - v.y) });
+    }
+    function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
+    if(distToSegment(p, segment.a, segment.b) < 2){
+      return true
+    } else {
+      return false
+    }
+  }
+  //Check if segment is colliding circle
+  Collision.isKdopSegmentCollideCircle = function (kdop, circle){
+    for (var i = 0; i < kdop.points.length; i++){
+      if(Collision.checkForSegmentCircleCollision(kdop.points[i], kdop.points[(i+1) % kdop.points.length], circle))
+        return true
+    }
+    return false
+  }
+  //Check if KDop intersects obb
+  Collision.checkForKdopObbCollision = function(kdop, obb){
+    if(Collision.arePolygonColliding(kdop, obb))
+      Collision.dummyCollide(kdop, obb)
+  }
+  //The one to collide them all
   Collision.dummyCollide = function(entityA, entityB){
     //TODO : Make collisions clever by sending to dest a strength proportionnal to the area of the src
     var tempX = entityA.dX
@@ -385,6 +381,5 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       entityB.dY = tempY
     }
   }
-
 return Collision
 })

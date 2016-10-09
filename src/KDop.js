@@ -44,9 +44,8 @@ define(['Collision', 'Vector'], (Collision, Vector) => {
       for(var i = 0; i < this.points.length; i++){
         isUnique = true
         for(var j = i+1; j < this.points.length; j++){
-          if(this.points[i].x == this.points[j].x && this.points[i].y == this.points[j].y){
+          if(this.points[i].x == this.points[j].x && this.points[i].y == this.points[j].y)
             isUnique = false
-          }
         }
         if(isUnique)
           temp.push(this.points[i])
@@ -59,11 +58,10 @@ define(['Collision', 'Vector'], (Collision, Vector) => {
       var xIndexs = []
       var yIndexs = []
       for (var i = 0; i < this.axis.length; i++){
-        if(i%2==0){
+        if(i%2==0)
           xIndexs.splice(1, 0, i)
-        } else {
+        else
           yIndexs.splice(1, 0, i)
-        }
       }
       return xIndexs.concat(yIndexs)
     }

@@ -3,15 +3,12 @@ define(['Vector'], (Vector) => {
   class Obb {
     //This Obb's constructor
     constructor(config){
-
       var rad = -config.angle
       var vectorX = new Vector(Math.cos(rad), Math.sin(rad))
       vectorX.productWithScalar(config.width/2)
       var vectorY = new Vector(- Math.sin(rad), Math.cos(rad))
       vectorY.productWithScalar(config.height/2)
-
       var center = new Vector(config.x, config.y)
-
       this.points = []
       this.points.push(center.substractVector(vectorX).substractVector(vectorY))
       this.points.push(center.addVector(vectorX).substractVector(vectorY))
@@ -43,12 +40,10 @@ define(['Vector'], (Vector) => {
         || this.points[3].y < 0){
         this.dY = -this.dY
       }
-
       var toAdd = new Vector(this.dX, this.dY)
       for (var i = 0; i < 4; i ++){
         this.points[i] = this.points[i].addVector(toAdd)
       }
-
     }
     //Draw this Obb
     draw(ctx){

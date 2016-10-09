@@ -37,7 +37,7 @@ define(['Collision', 'Circle', 'Aabb', 'Obb', 'Point', 'KDop'], (Collision, Circ
       }
       this.validity = true
     }
-    //Add a shape
+    //Add a shape - modify positions and areas proportionally to window ratio
     addShape(shape){
       if(shape.type == "circle"){
         shape.x = shape.x * this.ratioX

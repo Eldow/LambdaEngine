@@ -32,9 +32,9 @@ To have a look at the Jasmine test suite, visit : <http://localhost:3000/tests>
 
 ### Collisions
 * Circle vs Circle : Distance check
-* Circle vs Aabb : X & Y Distance check composition
-* Circle vs Obb : Line projection
-* Circle vs KDop : Line projection
+* Circle vs Aabb : Distance check
+* Circle vs Obb : Center on segment projection
+* Circle vs KDop : Center on segment projection
 * Circle vs Point : Distance check
 * Aabb vs Aabb : Corners comparison
 * Aabb vs Obb : Separating Axis Theorem
