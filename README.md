@@ -30,7 +30,7 @@ To have a look at the Jasmine test suite, visit : <http://localhost:3000/tests>
 * Obb implementation
 * KDop implementation
 
-### Collisions actually implemented (see **src/Collision.js**)
+### Collisions
 * Circle vs Circle : Distance check
 * Circle vs Aabb : X & Y Distance check composition
 * Circle vs Obb : Line projection
