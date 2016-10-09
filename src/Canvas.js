@@ -1,4 +1,4 @@
-define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point', 'KDop'], (Collision, Circle, Aabb, Obb, Polygon, Point, KDop) => {
+define(['Collision', 'Circle', 'Aabb', 'Obb', 'Point', 'KDop'], (Collision, Circle, Aabb, Obb, Point, KDop) => {
   "use strict"
   class Canvas {
     //Canvas constructor
@@ -9,8 +9,6 @@ define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point', 'KDop'], (Coll
       this.height = window.innerHeight
       this.ratioX = this.width/1920
       this.ratioY = this.height/1080
-      console.log(this.ratioX)
-
       this.shapes = []
       this.validity = false
     }

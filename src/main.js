@@ -16,10 +16,10 @@
       play.addEventListener("click", function(){
         if(g.loop == null){
           g.run()
-          play.style.backgroundImage = 'url(pause-button.png)'
+          play.style.backgroundImage = 'url(assets/pause-button.png)'
         } else {
           g.stop()
-          play.style.backgroundImage = 'url(play-button.png)'
+          play.style.backgroundImage = 'url(assets/play-button.png)'
         }
       })
     })

@@ -243,7 +243,7 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     var dx = circle.x - x
     var dy = circle.y - y
 
-    if(Math.sqrt(dx * dx + dy * dy) <= circle.radius + 1){
+    if(Math.sqrt(dx * dx + dy * dy) <= circle.radius){
       return true
     }
     return false

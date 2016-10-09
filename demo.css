@@ -35,7 +35,7 @@ html {
 .play {
   width: 128px;
   height: 128px;
-  background: url("play-button.png");
+  background: url("./assets/play-button.png");
 }
 .fps {
   font-size: 5em;

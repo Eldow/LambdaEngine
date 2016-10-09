@@ -1,0 +1,19 @@
+html
+  head
+    title Lambda Engine Demo
+    link(rel='stylesheet', type='text/css', href='demo.css', media='screen')
+    link(href='https://fonts.googleapis.com/css?family=Raleway:100', rel='stylesheet')
+  body
+    .title Lambda Engine
+    .subtitle A Simple Javascript Game Engine
+    // Play/Pause Button
+    .button-container
+      #play.play
+    // FPS Indicator
+    .fps-container
+      #fps.fps
+    // HTML5 Canvas
+    .container
+      canvas#canvas(width='1024', height='668')
+        | Your browser doesn't support the HTML5 canvas.
+    script(data-main='../src/main', src='../lib/require.js')
