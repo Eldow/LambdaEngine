@@ -68,11 +68,8 @@ define(['Collision', 'Circle', 'Aabb', 'Obb', 'Polygon', 'Point', 'KDop'], (Coll
       }
       else if(shape.type == "kdop"){
         for (var i = 0; i < shape.mins.length; i++){
-          var delta = shape.axis[i].x * this.ratioX + shape.axis[i].y * this.ratioY
-          console.log("before", shape.mins[i])
-          shape.mins[i] += delta
-          console.log("after", shape.mins[i])
-          shape.maxs[i] += delta
+          shape.mins[i] *= (this.ratioX + this.ratioY) / 2
+          shape.maxs[i] *= (this.ratioX + this.ratioY) / 2
         }
         shape = new KDop(shape)
       }
