@@ -34,7 +34,7 @@ define([], () => {
         ctx.stroke()
       }
       ctx.textAlign="end";
-      var text = this.x + ":" + this.y
+      var text = this.x.toFixed(2) + ":" + this.y.toFixed(2)
       ctx.fillText(text,this.x - 5, this.y - 5);
     }
   }
