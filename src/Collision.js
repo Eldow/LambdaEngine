@@ -300,10 +300,13 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
   }
   //Check if point and kdop are colliding by computing a kdop4 for point
   Collision.checkForKdopPointCollision = function(kdop, p){
+    var isCollide = false
     for (var i = 0; i < kdop.points.length; i++){
       if(Collision.checkForPointSegmentCollision(p, {"a":kdop.points[i], "b":kdop.points[(i+1)%kdop.points.length]}))
-        Collision.dummyCollide(kdop, p)
+        isCollide = true
     }
+    if(isCollide)
+      Collision.dummyCollide(kdop, p)
   }
   //Check if KDop intersects circle
   Collision.checkForKdopCircleCollision = function(kdop, circle){
