@@ -29,7 +29,7 @@ require.config({
   }
 });
 require(['jasmine-boot'], function () {
-  require(['CanvasSpec', 'GameSpec', 'PointSpec'], function(Canvas, Game, Point){
+  require(['CanvasSpec', 'GameSpec', 'PointSpec', 'AabbSpec', 'CircleSpec'], function(Canvas, Game, Point, Aabb, Circle){
     //trigger Jasmine
     window.onload();
   })
