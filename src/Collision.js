@@ -369,7 +369,7 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     if(Collision.arePolygonColliding(kdop, obb))
       Collision.dummyCollide(kdop, obb)
   }
-  //The one to collide them all
+  //One function to collide them all
   Collision.dummyCollide = function(entityA, entityB){
     //TODO : Make collisions clever by sending to dest a strength proportionnal to the area of the src
     var tempX = entityA.dX
