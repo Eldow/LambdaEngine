@@ -123,29 +123,30 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
   }
   //Checks if kdopA intersects kdopB and compute resulting velocities
   Collision.checkForKdopKdopCollision = function(kdopA, kdopB){
-    var k = ((kdopA.k > kdopB.k) ? kdopB.k : kdopA.k)
+    var k = ((kdopA.k > kdopB.k) ? kdopA.k : kdopB.k)
     for(var i = 0; i < k/2; i++){
-      if(kdopA.mins[i] >= kdopB.maxs[i] || kdopA.maxs[i] <= kdopB.mins[i])
+      if(kdopA.mins[i] > kdopB.maxs[i] || kdopA.maxs[i] < kdopB.mins[i])
         return
     }
     Collision.dummyCollide(kdopA, kdopB)
   }
   //Checks if obbA intersects obbB and compute resulting velocities
   Collision.checkForObbObbCollision = function(obbA, obbB){
-    if(Collision.isObbObbCollided(obbA,obbB)){
+    if(Collision.arePolygonColliding(obbA,obbB)){
       Collision.dummyCollide(obbA, obbB)
     }
   }
 
-  Collision.isObbObbCollided = function(obbA, obbB){
+  Collision.arePolygonColliding = function(polygonA, polygonB){
     var overlap = true
-    var projectedPointsA = obbA.projectShape(obbB.points)
-    var projectedPointsB = obbB.projectShape(obbA.points, true)
-    for (var i = 0; i < projectedPointsA.length; i++){
-      var segmentA = projectedPointsA[i]
-      var segmentB = projectedPointsB[i]
+    var projectedPoints = Collision.projectShape(polygonA.points, polygonB.points)
+    for (var i = 0; i < projectedPoints.shapeA.length; i++){
+      var segmentA = projectedPoints.shapeA[i]
+      var segmentB = projectedPoints.shapeB[i]
+      if(segmentA !== undefined && segmentB !== undefined){
         if (!Collision.overlap(segmentA, segmentB)){
           overlap = false
+        }
       }
     }
     return overlap
@@ -195,7 +196,7 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
       "color": aabb.fillColor
     }
     var convertedAabb = new Obb(config)
-    if(Collision.isObbObbCollided(obb, convertedAabb)){
+    if(Collision.arePolygonColliding(obb, convertedAabb)){
       Collision.dummyCollide(obb, aabb)
     }
   }
@@ -242,7 +243,7 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     var dx = circle.x - x
     var dy = circle.y - y
 
-    if(Math.sqrt(dx * dx + dy * dy) <= circle.radius){
+    if(Math.sqrt(dx * dx + dy * dy) <= circle.radius + 1){
       return true
     }
     return false
@@ -283,10 +284,19 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
   }
   //Check if aabb and kdop are colliding by turning the aabb into a kdop4
   Collision.checkForKdopAabbCollision = function(kdop, aabb){
-    var kAabb = {"k":4, "mins":[aabb.x, aabb.y], "maxs":[aabb.x+aabb.width, aabb.y+aabb.height], "dX":aabb.dX,"dY":aabb.dY}
-    Collision.checkForKdopKdopCollision(kdop, kAabb)
-    aabb.dX = kAabb.dX
-    aabb.dY = kAabb.dY
+    var config = {
+      "type": "obb",
+      "x": aabb.x + aabb.width/2,
+      "y": aabb.y + aabb.height/2,
+      "width": aabb.width,
+      "height": aabb.height,
+      "angle": 0,
+      "color": aabb.fillColor
+    }
+    var convertedAabb = new Obb(config)
+    if(Collision.arePolygonColliding(kdop, convertedAabb)){
+      Collision.dummyCollide(kdop, aabb)
+    }
   }
   //Check if point and kdop are colliding by computing a kdop4 for point
   Collision.checkForKdopPointCollision = function(kdop, p){
@@ -297,22 +307,68 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
   }
   //Check if KDop intersects circle
   Collision.checkForKdopCircleCollision = function(kdop, circle){
-    if(Collision.isKdopSegmentCollideCircle(kdop, circle)){
+    if(Collision.isKdopSegmentCollideCircle(kdop, circle))
       Collision.dummyCollide(kdop, circle)
-    }
   }
   //Check if segment is colliding circle
   Collision.isKdopSegmentCollideCircle = function (kdop, circle){
     for (var i = 0; i < kdop.points.length; i++){
-      if(Collision.checkForSegmentCircleCollision(kdop.points[i], kdop.points[(i+1) % kdop.points.length], circle)){
+      if(Collision.checkForSegmentCircleCollision(kdop.points[i], kdop.points[(i+1) % kdop.points.length], circle))
         return true
-      }
     }
     return false
   }
   //Check if KDop intersects obb
   Collision.checkForKdopObbCollision = function(kdop, obb){
+    if(Collision.arePolygonColliding(kdop, obb))
+      Collision.dummyCollide(kdop, obb)
+  }
+  //Project corners on a vector and return min and max boundaries
+  Collision.getProjectedVector = function(vector, points){
+    var projectedPoints = []
+    for (var i = 0; i < points.length; i ++){
+      projectedPoints.push(vector.getProjectedPoint(points[i]))
+    }
+    var d = 0
+    var p1, p2, currentD, maxPoints
 
+    for (var j = 0; j < points.length; j++){
+      for (var k = j + 1; k < points.length; k++){
+        p1 = projectedPoints[k]
+        p2 = projectedPoints[j]
+        currentD = Math.sqrt((p1.x - p2.x)*(p1.x - p2.x)+(p1.y - p2.y)*(p1.y - p2.y))
+        if (currentD > d){
+          d = currentD
+          maxPoints = [p1, p2]
+        }
+      }
+    }
+    return maxPoints
+  }
+
+  //project shape on the normal vectors of collidedShapePoints
+  Collision.projectShape = function(pointsA, pointsB){
+    var projectedShapeA = []
+    var projectedShapeB = []
+    var normalsA = []
+    var normalsB = []
+    //Compute all normals to each shape
+    for(var i = 0; i < pointsA.length; i++){
+      normalsA.push(new Vector(pointsA[i].x - pointsA[(i+1)%pointsA.length].x, pointsA[i].y - pointsA[(i+1)%pointsA.length].y).getNormalVector())
+    }
+    for(var i = 0; i < pointsB.length; i++){
+      normalsB.push(new Vector(pointsB[i].x - pointsB[(i+1)%pointsB.length].x, pointsB[i].y - pointsB[(i+1)%pointsB.length].y).getNormalVector())
+    }
+    //Compute each shape's projection to all normals
+    for(var normal of normalsA){
+      projectedShapeA.push(Collision.getProjectedVector(normal, pointsA))
+      projectedShapeB.push(Collision.getProjectedVector(normal, pointsB))
+    }
+    for(var normal of normalsB){
+      projectedShapeA.push(Collision.getProjectedVector(normal, pointsA))
+      projectedShapeB.push(Collision.getProjectedVector(normal, pointsB))
+    }
+    return { "shapeA": projectedShapeA, "shapeB": projectedShapeB}
   }
   //Swap velocities between two shapes
   Collision.dummyCollide = function(entityA, entityB){

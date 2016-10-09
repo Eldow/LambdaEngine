@@ -21,50 +21,6 @@ define(['Vector'], (Vector) => {
       this.dY = 1
       this.fillColor = config.color
     }
-
-    //Project corners on a vector and return min and max boundaries
-    getProjectedVector(vector){
-      var projectedPoints = []
-      for (var i = 0; i < 4; i ++){
-        projectedPoints.push(vector.getProjectedPoint(this.points[i]))
-      }
-
-      var d = 0
-      var p1, p2, currentD, maxPoints
-
-      for (var j = 0; j < 4; j ++){
-        for (var k = j + 1; k < 4; k ++){
-          p1 = projectedPoints[k]
-          p2 = projectedPoints[j]
-          currentD = Math.sqrt((p1.x - p2.x)*(p1.x - p2.x)+(p1.y - p2.y)*(p1.y - p2.y))
-          if (currentD > d){
-            d = currentD
-            maxPoints = [p1, p2]
-          }
-        }
-      }
-      return maxPoints
-    }
-
-    //project shape on the normal vectors of collidedShapePoints
-    projectShape(collidedShapePoints, second){
-      var projectedShape = []
-      for(var i = 0; i < collidedShapePoints.length; i++){
-        if(second){
-          projectedShape.push(this.getProjectedVector(new Vector(collidedShapePoints[(i+1) % collidedShapePoints.length].x - collidedShapePoints[i].x,
-            collidedShapePoints[(i+1) % collidedShapePoints.length].y - collidedShapePoints[i].y).getNormalVector()))
-          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % collidedShapePoints.length].x - this.points[i].x,
-            this.points[(i+1) % collidedShapePoints.length].y - this.points[i].y).getNormalVector()))
-        }else{
-          projectedShape.push(this.getProjectedVector(new Vector(this.points[(i+1) % collidedShapePoints.length].x - this.points[i].x,
-            this.points[(i+1) % collidedShapePoints.length].y - this.points[i].y).getNormalVector()))
-          projectedShape.push(this.getProjectedVector(new Vector(collidedShapePoints[(i+1) % collidedShapePoints.length].x - collidedShapePoints[i].x,
-            collidedShapePoints[(i+1) % collidedShapePoints.length].y - collidedShapePoints[i].y).getNormalVector()))
-        }
-      }
-      return projectedShape
-    }
-
     //Update this Obb's position
     update(canvas){
       if(this.points[0].x > canvas.width

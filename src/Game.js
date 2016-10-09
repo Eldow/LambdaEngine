@@ -10,21 +10,19 @@ define(['Canvas'], (Canvas) => {
       window.addEventListener('resize', function(event){
         location.reload()
       });
+      this.loop = null
     }
-    //Game loop
+    //Starts the game loop
     run(){
-      console.log("Game started")
-      var canvas = this.canvas
-      this.interval = setInterval(function(){
-        canvas.update()
-        canvas.draw()
-      },1000 / this.fps)
+      var timeStart = new Date()
+      this.canvas.update()
+      this.canvas.draw()
+      this.loop = setTimeout (this.run.bind(this), (1000/this.fps) - (new Date() - timeStart))
     }
-    //Game pause
-    stop() {
-      console.log("Game paused")
-      clearInterval(this.interval)
-      this.interval = null
+    //Stops the game loop
+    stop(){
+      clearTimeout(this.loop)
+      this.loop = null
     }
     //Load forms and initialize canvas
     loadGame(gameConfig){

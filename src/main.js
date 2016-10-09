@@ -14,7 +14,7 @@
       //Play/Pause button
       var play = document.getElementById("play")
       play.addEventListener("click", function(){
-        if(g.interval == null){
+        if(g.loop == null){
           g.run()
           play.style.backgroundImage = 'url(pause-button.png)'
         } else {

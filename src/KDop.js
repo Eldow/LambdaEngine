@@ -1,4 +1,4 @@
-define(['Collision'], (Collision) => {
+define(['Collision', 'Vector'], (Collision, Vector) => {
   "use strict"
   class KDop {
     //This kDop's constructor
@@ -39,6 +39,20 @@ define(['Collision'], (Collision) => {
         this.points.push(this.intersect(maxStraights[a], maxStraights[b]))
       }
       this.points.push(this.intersect(maxStraights[indexs[indexs.length-1]], minStraights[indexs[0]]))
+      var temp = []
+      var isUnique
+      for(var i = 0; i < this.points.length; i++){
+        isUnique = true
+        for(var j = i+1; j < this.points.length; j++){
+          if(this.points[i].x == this.points[j].x && this.points[i].y == this.points[j].y){
+            isUnique = false
+          }
+        }
+        if(isUnique)
+          temp.push(this.points[i])
+        isUnique = true
+      }
+      this.points = temp
     }
     //order axis
     orderAxis(){
