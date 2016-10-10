@@ -191,6 +191,11 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
     if(Collision.isKdopSegmentCollideCircle(kdop, circle))
       Collision.dummyCollide(kdop, circle)
   }
+  //Check if KDop intersects obb
+  Collision.checkForKdopObbCollision = function(kdop, obb){
+    if(Collision.arePolygonColliding(kdop, obb))
+      Collision.dummyCollide(kdop, obb)
+  }
   //Checks if pointA intersects pointB and compute resulting velocities
   Collision.checkForPointPointCollision = function(pointA, pointB){
     if(pointA.x == pointB.x && pointA.y == pointB.y){
@@ -363,11 +368,6 @@ define(['Vector', 'Obb'], (Vector, Obb) => {
         return true
     }
     return false
-  }
-  //Check if KDop intersects obb
-  Collision.checkForKdopObbCollision = function(kdop, obb){
-    if(Collision.arePolygonColliding(kdop, obb))
-      Collision.dummyCollide(kdop, obb)
   }
   //One function to collide them all
   Collision.dummyCollide = function(entityA, entityB){
